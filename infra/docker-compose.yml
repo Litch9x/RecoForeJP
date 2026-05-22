@@ -1,0 +1,69 @@
+# RecoForeJP - ローカル開発環境
+#
+# 起動:           docker compose -f infra/docker-compose.yml up -d
+# 状態確認:       docker compose -f infra/docker-compose.yml ps
+# ログ表示:       docker compose -f infra/docker-compose.yml logs -f
+# 停止:           docker compose -f infra/docker-compose.yml down
+# データ削除:     docker compose -f infra/docker-compose.yml down -v
+#
+# 環境変数: infra/.env を参照（infra/.env.example をコピーして作成）
+
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: reco-postgres
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-reco}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-reco_password}
+      POSTGRES_DB: ${POSTGRES_DB:-reco}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./postgres/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-reco} -d ${POSTGRES_DB:-reco}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - reco-net
+
+  redis:
+    image: redis:7-alpine
+    container_name: reco-redis
+    restart: unless-stopped
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - reco-net
+
+  # ----------------------------------------------------------------------
+  # アプリケーション層は各 Story で Dockerfile を作成後に追加します:
+  #   - api-gateway   (NestJS)        : RECO-? で追加予定
+  #   - user-service  (Spring Boot)   : RECO-? で追加予定
+  #   - item-service  (Spring Boot)   : RECO-? で追加予定
+  #   - ai-service    (FastAPI)       : RECO-? で追加予定
+  #   - frontend      (Next.js)       : RECO-? で追加予定
+  # ----------------------------------------------------------------------
+
+volumes:
+  postgres-data:
+    name: reco-postgres-data
+  redis-data:
+    name: reco-redis-data
+
+networks:
+  reco-net:
+    name: reco-net
+    driver: bridge
