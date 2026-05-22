@@ -1,0 +1,21 @@
+# テキストファイルの改行コードを LF に正規化（Windows でも問題なし）
+* text=auto eol=lf
+
+# Windows 固有ファイルは CRLF のまま
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# バイナリ（diff・改行変換しない）
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.docx binary
+*.xlsx binary
+*.pptx binary
+*.zip binary
+*.tar.gz binary
+*.jar binary
+*.class binary
