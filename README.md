@@ -32,16 +32,16 @@
 
 ## サービス一覧
 
-| サービス        | 技術スタック                  | 役割                                    |
-| --------------- | ----------------------------- | --------------------------------------- |
-| `frontend/`     | Next.js, TypeScript, i18n     | 多言語UI、推薦結果表示、検索            |
-| `api-gateway/`  | NestJS, TypeScript            | JWT 認証、ルーティング、レート制限      |
-| `user-service/` | Java 21, Spring Boot, Gradle  | ユーザー登録・プロフィール・設定        |
-| `item-service/` | Java 21, Spring Boot, Gradle  | アイテム CRUD、カテゴリ、フィードバック |
-| `ai-service/`   | Python, FastAPI               | 推薦アルゴリズム、埋め込み、LLM、NLP    |
-| `infra/`        | Docker Compose, k8s manifests | ローカル/本番インフラ定義               |
-| `docs/`         | —                             | 論文、スライド、図、ER 図               |
-| `scripts/`      | Python                        | Jira セットアップ等のツール             |
+| サービス        | 技術スタック                  | 役割                                                  |
+| --------------- | ----------------------------- | ----------------------------------------------------- |
+| `frontend/`     | Next.js, TypeScript, i18n     | 多言語UI、推薦結果表示、検索                          |
+| `api-gateway/`  | NestJS, TypeScript            | JWT 認証、ルーティング、レート制限                    |
+| `user-service/` | Java 21, Spring Boot, Gradle  | ユーザー登録・プロフィール・設定                      |
+| `item-service/` | Java 21, Spring Boot, Gradle  | アイテム CRUD、カテゴリ、フィードバック               |
+| `ai-service/`   | Python, FastAPI               | 推薦アルゴリズム、埋め込み、LLM、NLP                  |
+| `infra/`        | Docker Compose, k8s manifests | ローカル/本番インフラ定義                             |
+| `docs/`         | —                             | 論文、スライド、[スキーマ設計](docs/schema/README.md) |
+| `scripts/`      | Python                        | Jira セットアップ等のツール                           |
 
 ## 開発状況
 
