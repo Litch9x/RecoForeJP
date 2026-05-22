@@ -47,6 +47,39 @@
 
 🚧 **初期構築フェーズ**。各サービスはディレクトリ作成のみ。詳細は [Jira (RecoForeJP)](https://shinjp.atlassian.net/jira/software/projects/RECO/backlog) を参照。
 
+## ローカル開発環境の起動
+
+### 前提
+
+- Docker Desktop（または Docker Engine + Docker Compose v2）
+- 空いているポート: 5432（PostgreSQL）、6379（Redis）
+
+### 手順
+
+```bash
+# 1. 環境変数ファイルを作成
+cp infra/.env.example infra/.env
+
+# 2. データ層を起動（PostgreSQL + Redis）
+docker compose -f infra/docker-compose.yml up -d
+
+# 3. 起動確認
+docker compose -f infra/docker-compose.yml ps
+
+# 4. 停止
+docker compose -f infra/docker-compose.yml down
+
+# データも消したい場合
+docker compose -f infra/docker-compose.yml down -v
+```
+
+### PostgreSQL への接続確認
+
+```bash
+docker exec -it reco-postgres psql -U reco -d reco -c "SELECT extname FROM pg_extension;"
+# vector が表示されれば pgvector 有効
+```
+
 ## 開発ワークフロー
 
 1. Jira で Story を選び、`In Progress` に変更
