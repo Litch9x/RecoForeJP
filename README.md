@@ -32,16 +32,16 @@
 
 ## サービス一覧
 
-| サービス | 技術スタック | 役割 |
-|---------|-------------|------|
-| `frontend/` | Next.js, TypeScript, i18n | 多言語UI、推薦結果表示、検索 |
-| `api-gateway/` | NestJS, TypeScript | JWT 認証、ルーティング、レート制限 |
-| `user-service/` | Java 21, Spring Boot, Gradle | ユーザー登録・プロフィール・設定 |
-| `item-service/` | Java 21, Spring Boot, Gradle | アイテム CRUD、カテゴリ、フィードバック |
-| `ai-service/` | Python, FastAPI | 推薦アルゴリズム、埋め込み、LLM、NLP |
-| `infra/` | Docker Compose, k8s manifests | ローカル/本番インフラ定義 |
-| `docs/` | — | 論文、スライド、図、ER 図 |
-| `scripts/` | Python | Jira セットアップ等のツール |
+| サービス        | 技術スタック                  | 役割                                    |
+| --------------- | ----------------------------- | --------------------------------------- |
+| `frontend/`     | Next.js, TypeScript, i18n     | 多言語UI、推薦結果表示、検索            |
+| `api-gateway/`  | NestJS, TypeScript            | JWT 認証、ルーティング、レート制限      |
+| `user-service/` | Java 21, Spring Boot, Gradle  | ユーザー登録・プロフィール・設定        |
+| `item-service/` | Java 21, Spring Boot, Gradle  | アイテム CRUD、カテゴリ、フィードバック |
+| `ai-service/`   | Python, FastAPI               | 推薦アルゴリズム、埋め込み、LLM、NLP    |
+| `infra/`        | Docker Compose, k8s manifests | ローカル/本番インフラ定義               |
+| `docs/`         | —                             | 論文、スライド、図、ER 図               |
+| `scripts/`      | Python                        | Jira セットアップ等のツール             |
 
 ## 開発状況
 
@@ -79,6 +79,32 @@ docker compose -f infra/docker-compose.yml down -v
 docker exec -it reco-postgres psql -U reco -d reco -c "SELECT extname FROM pg_extension;"
 # vector が表示されれば pgvector 有効
 ```
+
+## コード品質ツール
+
+すべてのコミットは `pre-commit` フックで自動チェック・自動整形されます。
+
+### 初回セットアップ（1回だけ）
+
+```bash
+pip install pre-commit
+pre-commit install
+```
+
+### 走るチェック
+
+- **ファイル衛生**: 末尾空白除去、改行統一（LF）、大きなファイル検出、マージ衝突マーカー検出
+- **Python** (`ruff`): Lint + Format（Black + isort 統合の高速ツール）
+- **JS/TS/JSON/YAML/Markdown** (`prettier`): フォーマット統一
+- **Java** (`Spotless` via Gradle): 各 Spring Boot サービスで `./gradlew spotlessCheck`（サービス追加後）
+
+### 手動で全ファイル走査
+
+```bash
+pre-commit run --all-files
+```
+
+エディタ設定の統一は [`.editorconfig`](.editorconfig)、改行コード正規化は [`.gitattributes`](.gitattributes) で行います。
 
 ## 開発ワークフロー
 

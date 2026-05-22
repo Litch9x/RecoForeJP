@@ -29,29 +29,38 @@ PROJECT_KEY = os.environ.get("JIRA_PROJECT_KEY", "")
 OLD_EPIC_SUMMARY = "バックエンド NestJS [MVP]"
 
 NEW_EPICS = [
-    ("API Gateway (NestJS) [MVP]", [
-        "NestJS API Gateway 雛形 + ヘルスチェック",
-        "JWT 認証ミドルウェア（サインアップ・ログイン）",
-        "ルーティング設定（user-service / item-service / ai-service へのプロキシ）",
-        "レート制限・CORS 設定",
-        "リクエストロギング・エラーハンドリング",
-    ]),
-    ("User Service (Java/Spring Boot) [MVP]", [
-        "Spring Boot プロジェクト初期化（Gradle + Java 21）",
-        "User エンティティ & PostgreSQL 連携（Spring Data JPA）",
-        "ユーザー登録 API",
-        "ユーザープロフィール API（日本語レベル・在留資格・興味分野）",
-        "ユーザー設定 API（言語・通知など）",
-        "REST API テスト（JUnit 5 + Testcontainers）",
-    ]),
-    ("Item Service (Java/Spring Boot) [MVP]", [
-        "Spring Boot プロジェクト初期化（Gradle + Java 21）",
-        "Item エンティティ & PostgreSQL 連携",
-        "アイテム CRUD API",
-        "カテゴリ & タグ管理 API",
-        "フィードバック記録 API（user_actions テーブル連携）",
-        "REST API テスト（JUnit 5 + Testcontainers）",
-    ]),
+    (
+        "API Gateway (NestJS) [MVP]",
+        [
+            "NestJS API Gateway 雛形 + ヘルスチェック",
+            "JWT 認証ミドルウェア（サインアップ・ログイン）",
+            "ルーティング設定（user-service / item-service / ai-service へのプロキシ）",
+            "レート制限・CORS 設定",
+            "リクエストロギング・エラーハンドリング",
+        ],
+    ),
+    (
+        "User Service (Java/Spring Boot) [MVP]",
+        [
+            "Spring Boot プロジェクト初期化（Gradle + Java 21）",
+            "User エンティティ & PostgreSQL 連携（Spring Data JPA）",
+            "ユーザー登録 API",
+            "ユーザープロフィール API（日本語レベル・在留資格・興味分野）",
+            "ユーザー設定 API（言語・通知など）",
+            "REST API テスト（JUnit 5 + Testcontainers）",
+        ],
+    ),
+    (
+        "Item Service (Java/Spring Boot) [MVP]",
+        [
+            "Spring Boot プロジェクト初期化（Gradle + Java 21）",
+            "Item エンティティ & PostgreSQL 連携",
+            "アイテム CRUD API",
+            "カテゴリ & タグ管理 API",
+            "フィードバック記録 API（user_actions テーブル連携）",
+            "REST API テスト（JUnit 5 + Testcontainers）",
+        ],
+    ),
 ]
 
 
@@ -82,14 +91,16 @@ def api(method, path, body=None):
 
 
 def search_all_epics():
-    jql = f'project = {PROJECT_KEY} AND issuetype = Epic'
+    jql = f"project = {PROJECT_KEY} AND issuetype = Epic"
     qs = urllib.parse.urlencode({"jql": jql, "maxResults": 100, "fields": "summary"})
     return api("GET", f"/rest/api/3/search?{qs}").get("issues", [])
 
 
 def find_children(parent_key):
-    jql = f'project = {PROJECT_KEY} AND parent = {parent_key}'
-    qs = urllib.parse.urlencode({"jql": jql, "maxResults": 100, "fields": "summary,issuetype"})
+    jql = f"project = {PROJECT_KEY} AND parent = {parent_key}"
+    qs = urllib.parse.urlencode(
+        {"jql": jql, "maxResults": 100, "fields": "summary,issuetype"}
+    )
     return api("GET", f"/rest/api/3/search?{qs}").get("issues", [])
 
 
@@ -114,10 +125,16 @@ def main():
     execute = "--execute" in args
 
     # 1. Env check
-    missing = [n for n, v in [
-        ("JIRA_EMAIL", EMAIL), ("JIRA_API_TOKEN", TOKEN),
-        ("JIRA_SITE", SITE), ("JIRA_PROJECT_KEY", PROJECT_KEY),
-    ] if not v]
+    missing = [
+        n
+        for n, v in [
+            ("JIRA_EMAIL", EMAIL),
+            ("JIRA_API_TOKEN", TOKEN),
+            ("JIRA_SITE", SITE),
+            ("JIRA_PROJECT_KEY", PROJECT_KEY),
+        ]
+        if not v
+    ]
     if missing:
         die(f"環境変数が未設定: {', '.join(missing)}")
     print(f"✅ env vars OK (project={PROJECT_KEY})")
@@ -127,22 +144,28 @@ def main():
     epics = search_all_epics()
     matches = [e for e in epics if e["fields"]["summary"].strip() == OLD_EPIC_SUMMARY]
     if not matches:
-        die(f"旧 Epic '{OLD_EPIC_SUMMARY}' が見つかりません。すでに削除済みの可能性があります。")
+        die(
+            f"旧 Epic '{OLD_EPIC_SUMMARY}' が見つかりません。すでに削除済みの可能性があります。"
+        )
     if len(matches) > 1:
-        die(f"同名 Epic が複数あります。手動で確認してください: {[m['key'] for m in matches]}")
+        die(
+            f"同名 Epic が複数あります。手動で確認してください: {[m['key'] for m in matches]}"
+        )
     old_epic = matches[0]
     old_epic_key = old_epic["key"]
     print(f"  → 見つかりました: {old_epic_key}")
 
     # 3. List children
     children = find_children(old_epic_key)
-    print(f"\n📋 削除対象:")
+    print("\n📋 削除対象:")
     print(f"  Epic  {old_epic_key}  {OLD_EPIC_SUMMARY}")
     for c in children:
-        print(f"  └─ {c['fields']['issuetype']['name']:6s} {c['key']}  {c['fields']['summary']}")
+        print(
+            f"  └─ {c['fields']['issuetype']['name']:6s} {c['key']}  {c['fields']['summary']}"
+        )
 
     # 4. Show new structure
-    print(f"\n📋 新規作成:")
+    print("\n📋 新規作成:")
     for epic_name, stories in NEW_EPICS:
         print(f"  Epic   {epic_name}")
         for s in stories:
@@ -153,13 +176,15 @@ def main():
     print(f"\n合計: 削除 {n_delete} 件 / 作成 {n_create} 件")
 
     if not execute:
-        print("\n⚠️  ドライランモードです。実際に変更するには --execute を付けて再実行してください:")
+        print(
+            "\n⚠️  ドライランモードです。実際に変更するには --execute を付けて再実行してください:"
+        )
         print("    python scripts/update_jira_architecture.py --execute")
         return
 
     # 5. Confirm
     print()
-    ans = input(f"本当に実行しますか? 削除は取り消せません [y/N]: ").strip().lower()
+    ans = input("本当に実行しますか? 削除は取り消せません [y/N]: ").strip().lower()
     if ans != "y":
         print("中止しました。")
         return

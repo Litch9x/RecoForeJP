@@ -34,83 +34,116 @@ PROJECT_KEY = os.environ.get("JIRA_PROJECT_KEY", "")
 # --- Ticket plan -----------------------------------------------------------
 # 形式: [(Epic タイトル, [Story タイトル, ...]), ...]
 PLAN = [
-    ("プロジェクト基盤・開発環境 [MVP]", [
-        "monorepo + Git 環境構築",
-        "Docker 開発環境（compose 雛形）",
-        "コード品質ツール導入（Lint / Format / pre-commit）",
-    ]),
-    ("データベース設計 [MVP]", [
-        "スキーマ設計（ER 図・テーブル定義）",
-        "マイグレーション & シードデータ",
-    ]),
-    ("バックエンド NestJS [MVP]", [
-        "NestJS プロジェクト初期化 & ヘルスチェック API",
-        "ユーザー認証（JWT サインアップ / ログイン）",
-        "ユーザープロフィール API",
-        "アイテム CRUD API",
-        "フィードバック記録 API",
-        "推薦結果取得 API（AI サービス仲介）",
-    ]),
-    ("AI 推薦サービス FastAPI [MVP の核]", [
-        "FastAPI 雛形 + ヘルスチェック",
-        "コンテンツベース推薦（属性マッチ）",
-        "テキスト埋め込み生成（sentence-transformers）",
-        "pgvector 連携・類似度検索",
-        "類似ユーザ分析（協調フィルタリング）",
-        "ハイブリッド推薦モデル統合",
-        "LLM 連携（意図抽出・説明文生成）",
-        "意味検索エンドポイント",
-    ]),
-    ("フロントエンド Next.js [MVP]", [
-        "Next.js プロジェクト初期化",
-        "認証 UI（サインアップ・ログイン）",
-        "プロフィール設定画面（日本語レベル・興味・在留資格）",
-        "推薦一覧画面（カード型）",
-        "アイテム詳細画面",
-        "自然言語検索フォーム",
-        "フィードバック UI（お気に入り・評価）",
-    ]),
-    ("多言語対応 [後期]", [
-        "i18n セットアップ（next-i18next）",
-        "日本語・英語・ベトナム語リソース作成",
-        "多言語埋め込みモデル導入（mBERT / XLM-R）",
-        "やさしい日本語変換機能（LLM 活用）",
-    ]),
-    ("CI/CD [後期]", [
-        "GitHub Actions: Lint & テスト自動化",
-        "GitHub Actions: Docker イメージビルド",
-        "PR テンプレート & ブランチ保護",
-    ]),
-    ("デプロイ・運用 [後期]", [
-        "クラウド選定（Fly.io / Render / AWS 等）",
-        "本番環境構築",
-        "監視（Sentry / ログ収集）",
-    ]),
-    ("評価実験 [論文 第5章]", [
-        "評価指標の定義（Precision / Recall / NDCG）",
-        "テストデータ準備",
-        "推薦精度評価実験",
-        "ユーザー満足度アンケート設計・実施",
-        "実験結果集計・グラフ化",
-    ]),
-    ("論文執筆 [継続]", [
-        "第3章 提案手法 詳細化",
-        "第4章 システム実装 詳細化",
-        "第5章 評価実験 執筆",
-        "第6章 結論・今後の課題 執筆",
-        "発表スライド作成",
-        "最終提出版チェック",
-    ]),
+    (
+        "プロジェクト基盤・開発環境 [MVP]",
+        [
+            "monorepo + Git 環境構築",
+            "Docker 開発環境（compose 雛形）",
+            "コード品質ツール導入（Lint / Format / pre-commit）",
+        ],
+    ),
+    (
+        "データベース設計 [MVP]",
+        [
+            "スキーマ設計（ER 図・テーブル定義）",
+            "マイグレーション & シードデータ",
+        ],
+    ),
+    (
+        "バックエンド NestJS [MVP]",
+        [
+            "NestJS プロジェクト初期化 & ヘルスチェック API",
+            "ユーザー認証（JWT サインアップ / ログイン）",
+            "ユーザープロフィール API",
+            "アイテム CRUD API",
+            "フィードバック記録 API",
+            "推薦結果取得 API（AI サービス仲介）",
+        ],
+    ),
+    (
+        "AI 推薦サービス FastAPI [MVP の核]",
+        [
+            "FastAPI 雛形 + ヘルスチェック",
+            "コンテンツベース推薦（属性マッチ）",
+            "テキスト埋め込み生成（sentence-transformers）",
+            "pgvector 連携・類似度検索",
+            "類似ユーザ分析（協調フィルタリング）",
+            "ハイブリッド推薦モデル統合",
+            "LLM 連携（意図抽出・説明文生成）",
+            "意味検索エンドポイント",
+        ],
+    ),
+    (
+        "フロントエンド Next.js [MVP]",
+        [
+            "Next.js プロジェクト初期化",
+            "認証 UI（サインアップ・ログイン）",
+            "プロフィール設定画面（日本語レベル・興味・在留資格）",
+            "推薦一覧画面（カード型）",
+            "アイテム詳細画面",
+            "自然言語検索フォーム",
+            "フィードバック UI（お気に入り・評価）",
+        ],
+    ),
+    (
+        "多言語対応 [後期]",
+        [
+            "i18n セットアップ（next-i18next）",
+            "日本語・英語・ベトナム語リソース作成",
+            "多言語埋め込みモデル導入（mBERT / XLM-R）",
+            "やさしい日本語変換機能（LLM 活用）",
+        ],
+    ),
+    (
+        "CI/CD [後期]",
+        [
+            "GitHub Actions: Lint & テスト自動化",
+            "GitHub Actions: Docker イメージビルド",
+            "PR テンプレート & ブランチ保護",
+        ],
+    ),
+    (
+        "デプロイ・運用 [後期]",
+        [
+            "クラウド選定（Fly.io / Render / AWS 等）",
+            "本番環境構築",
+            "監視（Sentry / ログ収集）",
+        ],
+    ),
+    (
+        "評価実験 [論文 第5章]",
+        [
+            "評価指標の定義（Precision / Recall / NDCG）",
+            "テストデータ準備",
+            "推薦精度評価実験",
+            "ユーザー満足度アンケート設計・実施",
+            "実験結果集計・グラフ化",
+        ],
+    ),
+    (
+        "論文執筆 [継続]",
+        [
+            "第3章 提案手法 詳細化",
+            "第4章 システム実装 詳細化",
+            "第5章 評価実験 執筆",
+            "第6章 結論・今後の課題 執筆",
+            "発表スライド作成",
+            "最終提出版チェック",
+        ],
+    ),
 ]
+
 
 # --- Helpers ---------------------------------------------------------------
 def die(msg, code=1):
     print(f"❌ {msg}")
     sys.exit(code)
 
+
 def auth_header():
     raw = f"{EMAIL}:{TOKEN}".encode()
     return "Basic " + base64.b64encode(raw).decode()
+
 
 def api(method, path, body=None):
     url = f"https://{SITE}{path}"
@@ -127,6 +160,7 @@ def api(method, path, body=None):
         err = e.read().decode()
         raise RuntimeError(f"HTTP {e.code} on {method} {path}: {err}")
 
+
 def create_issue(issue_type, summary, parent_key=None):
     fields = {
         "project": {"key": PROJECT_KEY},
@@ -138,6 +172,7 @@ def create_issue(issue_type, summary, parent_key=None):
     res = api("POST", "/rest/api/3/issue", {"fields": fields})
     return res["key"]
 
+
 # --- Main ------------------------------------------------------------------
 def main():
     args = sys.argv[1:]
@@ -145,10 +180,16 @@ def main():
     skip_confirm = "--yes" in args
 
     # 1. Env check
-    missing = [n for n, v in [
-        ("JIRA_EMAIL", EMAIL), ("JIRA_API_TOKEN", TOKEN),
-        ("JIRA_SITE", SITE), ("JIRA_PROJECT_KEY", PROJECT_KEY),
-    ] if not v]
+    missing = [
+        n
+        for n, v in [
+            ("JIRA_EMAIL", EMAIL),
+            ("JIRA_API_TOKEN", TOKEN),
+            ("JIRA_SITE", SITE),
+            ("JIRA_PROJECT_KEY", PROJECT_KEY),
+        ]
+        if not v
+    ]
     if missing:
         die(f"環境変数が未設定: {', '.join(missing)}")
     print(f"✅ env vars OK (project={PROJECT_KEY}, site={SITE})")
@@ -171,7 +212,9 @@ def main():
     # 4. Summary
     n_epics = len(PLAN)
     n_stories = sum(len(s) for _, s in PLAN)
-    print(f"\n📋 作成予定: Epic {n_epics} 件, Story {n_stories} 件 (合計 {n_epics + n_stories})")
+    print(
+        f"\n📋 作成予定: Epic {n_epics} 件, Story {n_stories} 件 (合計 {n_epics + n_stories})"
+    )
 
     if verify_only:
         print("\n--verify モードのため作成しません。")
@@ -208,6 +251,7 @@ def main():
             time.sleep(0.3)
 
     print(f"\n✅ 完了: {len(created)} 件作成")
+
 
 if __name__ == "__main__":
     main()
