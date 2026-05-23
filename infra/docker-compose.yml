@@ -53,12 +53,47 @@ services:
       - reco-net
 
   # ----------------------------------------------------------------------
-  # アプリケーション層は各 Story で Dockerfile を作成後に追加します:
-  #   - api-gateway   (NestJS)        : RECO-? で追加予定
-  #   - user-service  (Spring Boot)   : RECO-? で追加予定
-  #   - item-service  (Spring Boot)   : RECO-? で追加予定
-  #   - ai-service    (FastAPI)       : RECO-? で追加予定
-  #   - frontend      (Next.js)       : RECO-? で追加予定
+  # api-gateway (NestJS) — RECO-59 で追加
+  # ----------------------------------------------------------------------
+  api-gateway:
+    build:
+      context: ../api-gateway
+      dockerfile: Dockerfile
+    container_name: reco-api-gateway
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+    ports:
+      - "${API_GATEWAY_PORT:-3000}:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "wget",
+          "--quiet",
+          "--tries=1",
+          "--spider",
+          "http://localhost:3000/health",
+        ]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    networks:
+      - reco-net
+
+  # ----------------------------------------------------------------------
+  # 残りのアプリ層は各 Story で Dockerfile 作成後に追加:
+  #   - user-service  (Spring Boot)   : User Service Epic で追加
+  #   - item-service  (Spring Boot)   : Item Service Epic で追加
+  #   - ai-service    (FastAPI)       : AI 推薦 Epic で追加
+  #   - frontend      (Next.js)       : Frontend Epic で追加
   # ----------------------------------------------------------------------
 
 volumes:
