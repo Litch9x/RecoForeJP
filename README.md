@@ -231,6 +231,41 @@ curl http://localhost:8082/actuator/health
 docker compose -f infra/docker-compose.yml up -d --build item-service
 ```
 
+## ai-service (Python / FastAPI)
+
+### ローカル開発
+
+```bash
+cd ai-service
+python -m venv .venv
+.venv/Scripts/activate          # PowerShell: .venv\Scripts\Activate.ps1
+pip install -e ".[dev]"          # 本体 + dev (pytest / ruff / httpx)
+uvicorn ai_service.main:app --reload --port 8000
+```
+
+### Docker
+
+```bash
+docker compose -f infra/docker-compose.yml up -d --build ai-service
+docker compose -f infra/docker-compose.yml logs -f ai-service
+```
+
+### ヘルスチェック
+
+```bash
+curl http://localhost:8000/health
+# {"status":"ok","service":"ai-service","timestamp":"..."}
+```
+
+### テスト
+
+```bash
+cd ai-service
+pytest                                # 全テスト
+ruff check src tests                  # Lint
+ruff format src tests                 # Format
+```
+
 ## コード品質ツール
 
 すべてのコミットは `pre-commit` フックで自動チェック・自動整形されます。

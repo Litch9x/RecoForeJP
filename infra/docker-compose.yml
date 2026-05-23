@@ -161,8 +161,44 @@ services:
       - reco-net
 
   # ----------------------------------------------------------------------
+  # ai-service (Python / FastAPI) — RECO-20 で追加
+  # ----------------------------------------------------------------------
+  ai-service:
+    build:
+      context: ../ai-service
+      dockerfile: Dockerfile
+    container_name: reco-ai-service
+    restart: unless-stopped
+    environment:
+      PORT: 8000
+      DATABASE_URL: postgresql://${POSTGRES_USER:-reco}:${POSTGRES_PASSWORD:-reco_password}@postgres:5432/${POSTGRES_DB:-reco}
+      REDIS_URL: redis://redis:6379
+    ports:
+      - "${AI_SERVICE_PORT:-8000}:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "wget",
+          "--quiet",
+          "--tries=1",
+          "--spider",
+          "http://localhost:8000/health",
+        ]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    networks:
+      - reco-net
+
+  # ----------------------------------------------------------------------
   # 残りのアプリ層は各 Story で Dockerfile 作成後に追加:
-  #   - ai-service    (FastAPI)       : AI 推薦 Epic で追加
   #   - frontend      (Next.js)       : Frontend Epic で追加
   # ----------------------------------------------------------------------
 
