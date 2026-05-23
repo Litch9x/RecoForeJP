@@ -1,6 +1,7 @@
 package com.recoforejp.userservice;
 
 import com.recoforejp.userservice.user.UserInterestRepository;
+import com.recoforejp.userservice.user.UserPreferenceRepository;
 import com.recoforejp.userservice.user.UserProfileRepository;
 import com.recoforejp.userservice.user.UserRepository;
 import org.junit.jupiter.api.Test;
@@ -24,6 +25,7 @@ class UserServiceApplicationTests {
   @MockitoBean UserRepository userRepository;
   @MockitoBean UserProfileRepository userProfileRepository;
   @MockitoBean UserInterestRepository userInterestRepository;
+  @MockitoBean UserPreferenceRepository userPreferenceRepository;
 
   @Test
   void contextLoads() {}

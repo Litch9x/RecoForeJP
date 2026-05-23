@@ -1,7 +1,9 @@
 package com.recoforejp.userservice.user;
 
+import com.recoforejp.userservice.user.dto.PreferencesResponse;
 import com.recoforejp.userservice.user.dto.ProfileResponse;
 import com.recoforejp.userservice.user.dto.RegisterUserRequest;
+import com.recoforejp.userservice.user.dto.UpdatePreferencesRequest;
 import com.recoforejp.userservice.user.dto.UpdateProfileRequest;
 import com.recoforejp.userservice.user.dto.UserResponse;
 import jakarta.validation.Valid;
@@ -25,6 +27,7 @@ public class UserController {
 
   private final UserService userService;
   private final UserProfileService profileService;
+  private final UserPreferenceService preferenceService;
   private final UserRepository userRepository;
 
   /** ユーザー新規登録。成功時 201 Created を返す。 */
@@ -54,5 +57,18 @@ public class UserController {
   public ProfileResponse upsertProfile(
       @PathVariable UUID id, @Valid @RequestBody UpdateProfileRequest request) {
     return profileService.upsertProfile(id, request);
+  }
+
+  /** ユーザー設定取得。未設定なら既定値を返す（書き込みなし）。 */
+  @GetMapping("/{id}/preferences")
+  public PreferencesResponse getPreferences(@PathVariable UUID id) {
+    return preferenceService.getPreferences(id);
+  }
+
+  /** ユーザー設定の部分更新（null フィールドは変更しない）。 */
+  @PutMapping("/{id}/preferences")
+  public PreferencesResponse upsertPreferences(
+      @PathVariable UUID id, @Valid @RequestBody UpdatePreferencesRequest request) {
+    return preferenceService.upsert(id, request);
   }
 }
