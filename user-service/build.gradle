@@ -33,6 +33,9 @@ dependencies {
 	implementation 'org.flywaydb:flyway-database-postgresql'
 	runtimeOnly 'org.postgresql:postgresql'
 
+	// BCryptPasswordEncoder のためだけに crypto モジュールを取得（Spring Security 本体は不要）
+	implementation 'org.springframework.security:spring-security-crypto'
+
 	// Lombok: ボイラープレート削減（@Getter/@Setter/@Builder 等）
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
