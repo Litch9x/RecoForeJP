@@ -76,8 +76,44 @@ docker compose -f infra/docker-compose.yml down -v
 ### PostgreSQL への接続確認
 
 ```bash
+# 拡張機能（pgvector）の確認
 docker exec -it reco-postgres psql -U reco -d reco -c "SELECT extname FROM pg_extension;"
-# vector が表示されれば pgvector 有効
+
+# 作成されたスキーマ一覧
+docker exec -it reco-postgres psql -U reco -d reco -c "\dn"
+
+# 各スキーマのテーブル一覧
+docker exec -it reco-postgres psql -U reco -d reco -c "\dt users.*"
+docker exec -it reco-postgres psql -U reco -d reco -c "\dt items.*"
+docker exec -it reco-postgres psql -U reco -d reco -c "\dt ai.*"
+
+# シードデータの件数確認
+docker exec -it reco-postgres psql -U reco -d reco -c "
+  SELECT 'users' AS table, COUNT(*) FROM users.users
+  UNION ALL SELECT 'categories', COUNT(*) FROM items.categories
+  UNION ALL SELECT 'items', COUNT(*) FROM items.items
+  UNION ALL SELECT 'tags', COUNT(*) FROM items.tags;
+"
+```
+
+期待結果：users=3、categories=12、items=14、tags=22
+
+### マイグレーションの将来構成
+
+現状は `infra/postgres/init/*.sql` が Docker Compose 起動時に一括適用される。これは MVP のための簡易な仕組みで、サービス実装が進んだら以下に移行する：
+
+- `users` schema → `user-service/src/main/resources/db/migration/` (Flyway)
+- `items` schema → `item-service/src/main/resources/db/migration/` (Flyway)
+- `ai` schema → `ai-service/alembic/versions/` (Alembic)
+
+`infra/postgres/init/` は完全初期化用の bootstrap として残す（`docker compose down -v` 後の再起動で再適用）。
+
+### データ再投入
+
+```bash
+# データを消して再起動（init スクリプトがすべて再実行される）
+docker compose -f infra/docker-compose.yml down -v
+docker compose -f infra/docker-compose.yml up -d
 ```
 
 ## コード品質ツール
