@@ -140,6 +140,53 @@ curl http://localhost:3000/health
 # {"status":"ok","service":"api-gateway","timestamp":"...","uptime":...}
 ```
 
+## user-service (Spring Boot, Java 21)
+
+### ローカル開発（Docker なし）
+
+```bash
+cd user-service
+./gradlew bootRun
+```
+
+PowerShell の場合は `./gradlew.bat bootRun`。
+
+DB 接続情報は `application.properties` のデフォルト値（localhost:5432）か、環境変数で上書き：
+
+```bash
+DATABASE_URL=jdbc:postgresql://localhost:5432/reco \
+DATABASE_USER=reco \
+DATABASE_PASSWORD=reco_password \
+./gradlew bootRun
+```
+
+### Docker でビルド・起動
+
+```bash
+docker compose -f infra/docker-compose.yml up -d --build user-service
+docker compose -f infra/docker-compose.yml logs -f user-service
+```
+
+### ヘルスチェック
+
+```bash
+# 軽量チェック（独自エンドポイント）
+curl http://localhost:8081/health
+# {"status":"ok","service":"user-service","timestamp":"..."}
+
+# 詳細チェック（Actuator: DB 接続なども含む）
+curl http://localhost:8081/actuator/health
+```
+
+### テスト
+
+```bash
+cd user-service
+./gradlew test
+```
+
+テストは DB を必要としない（`src/test/resources/application.properties` で DB autoconfig を除外）。実 DB を使うテストは Testcontainers 等で個別に有効化予定。
+
 ## コード品質ツール
 
 すべてのコミットは `pre-commit` フックで自動チェック・自動整形されます。
