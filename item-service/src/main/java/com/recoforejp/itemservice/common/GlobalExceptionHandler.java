@@ -1,5 +1,6 @@
 package com.recoforejp.itemservice.common;
 
+import com.recoforejp.itemservice.feedback.InvalidFeedbackException;
 import com.recoforejp.itemservice.item.InvalidReferenceException;
 import com.recoforejp.itemservice.item.ItemNotFoundException;
 import java.time.OffsetDateTime;
@@ -33,6 +34,18 @@ public class GlobalExceptionHandler {
         .body(
             ErrorResponse.builder()
                 .code("INVALID_REFERENCE")
+                .message(e.getMessage())
+                .timestamp(OffsetDateTime.now())
+                .build());
+  }
+
+  /** フィードバックの type/rating 組み合わせが不正 → 400 */
+  @ExceptionHandler(InvalidFeedbackException.class)
+  public ResponseEntity<ErrorResponse> handleInvalidFeedback(InvalidFeedbackException e) {
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+        .body(
+            ErrorResponse.builder()
+                .code("INVALID_FEEDBACK")
                 .message(e.getMessage())
                 .timestamp(OffsetDateTime.now())
                 .build());
