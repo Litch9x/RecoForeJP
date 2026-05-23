@@ -116,6 +116,30 @@ docker compose -f infra/docker-compose.yml down -v
 docker compose -f infra/docker-compose.yml up -d
 ```
 
+## api-gateway (NestJS)
+
+### ローカル開発（Docker なし）
+
+```bash
+cd api-gateway
+npm install
+npm run start:dev    # ホットリロード付き
+```
+
+### Docker でビルド・起動
+
+```bash
+docker compose -f infra/docker-compose.yml up -d --build api-gateway
+docker compose -f infra/docker-compose.yml logs -f api-gateway
+```
+
+### ヘルスチェック
+
+```bash
+curl http://localhost:3000/health
+# {"status":"ok","service":"api-gateway","timestamp":"...","uptime":...}
+```
+
 ## コード品質ツール
 
 すべてのコミットは `pre-commit` フックで自動チェック・自動整形されます。
