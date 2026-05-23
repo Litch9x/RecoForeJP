@@ -205,6 +205,32 @@ cd user-service
 
 JPA の検証モード（`spring.jpa.hibernate.ddl-auto=validate`）により、起動時にエンティティと既存テーブルの一致がチェックされる（不一致なら起動失敗）。
 
+## item-service (Spring Boot, Java 21)
+
+`user-service` と同じテンプレートで構築。所有スキーマは `items`、ポート **8082**。
+
+```bash
+cd item-service
+./gradlew bootRun              # 8082 で起動
+./gradlew test                 # 単体テスト
+./gradlew integrationTest      # 統合テスト（Docker 必須）
+```
+
+### ヘルスチェック
+
+```bash
+curl http://localhost:8082/health
+# {"status":"ok","service":"item-service","timestamp":"..."}
+
+curl http://localhost:8082/actuator/health
+```
+
+### Docker
+
+```bash
+docker compose -f infra/docker-compose.yml up -d --build item-service
+```
+
 ## コード品質ツール
 
 すべてのコミットは `pre-commit` フックで自動チェック・自動整形されます。
