@@ -180,12 +180,30 @@ curl http://localhost:8081/actuator/health
 
 ### テスト
 
+単体テストと統合テスト（Testcontainers）を分離：
+
 ```bash
 cd user-service
+
+# 単体テスト（Docker 不要、常に走る）
 ./gradlew test
+
+# 統合テスト（Docker 必須、実 PostgreSQL で動作確認）
+./gradlew integrationTest
 ```
 
-テストは DB を必要としない（`src/test/resources/application.properties` で DB autoconfig を除外）。実 DB を使うテストは Testcontainers 等で個別に有効化予定。
+- `./gradlew build` は単体テストのみ実行（IT は除外）
+- 統合テストは `@Tag("integration")` で識別。`infra/postgres/init/*.sql` を Testcontainers の Postgres にコピーし、本番と同じ DDL で検証する
+- 単体テストは `@ActiveProfiles("no-db")` で DataSource / JPA autoconfig を除外し、Docker なしで動く
+
+### エンティティ
+
+| クラス             | テーブル              | 関係                     |
+| ------------------ | --------------------- | ------------------------ |
+| `user.User`        | `users.users`         | 主                       |
+| `user.UserProfile` | `users.user_profiles` | `User` と 1:1 共有主キー |
+
+JPA の検証モード（`spring.jpa.hibernate.ddl-auto=validate`）により、起動時にエンティティと既存テーブルの一致がチェックされる（不一致なら起動失敗）。
 
 ## コード品質ツール
 
