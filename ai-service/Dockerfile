@@ -13,13 +13,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends wget \
 # 非 root ユーザー
 RUN useradd --create-home --shell /bin/bash appuser
 
-# 依存関係を先にインストール（layer caching）
 # [ml] extras を含めて sentence-transformers + torch を導入（本番では必須・約 2GB）
+# pyproject.toml が src/ レイアウトを参照するので、src/ も一緒に COPY してから install する。
 COPY pyproject.toml ./
-RUN pip install --no-cache-dir ".[ml]"
-
-# アプリケーションコード
 COPY src /app/src
+RUN pip install --no-cache-dir ".[ml]"
 ENV PYTHONPATH=/app/src
 ENV PYTHONUNBUFFERED=1
 ENV PORT=8000

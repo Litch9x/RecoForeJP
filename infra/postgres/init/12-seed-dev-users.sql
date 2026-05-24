@@ -10,7 +10,7 @@
 INSERT INTO users.users (id, email, password_hash, nationality, native_language) VALUES
     ('00000000-0000-0000-0000-000000000001',
      'nguyen.student@example.com',
-     '$2b$10$LKj0CSLI8B3rmDS0V/0/qOJlqYS7TLA1zV9rOzQ7QzKlGc1XGfQ.O',
+     '$2b$10$GmsSAoiabUIXvmYdPpO9B.jL8xAB7Ocw325XZssN.puaTchcAiv26',
      'VN', 'vi');
 
 INSERT INTO users.user_profiles (user_id, japanese_level, residency_status, occupation, region, arrival_date, life_stage) VALUES
@@ -32,7 +32,7 @@ INSERT INTO users.user_preferences (user_id, preferred_language, notification_en
 INSERT INTO users.users (id, email, password_hash, nationality, native_language) VALUES
     ('00000000-0000-0000-0000-000000000002',
      'raj.engineer@example.com',
-     '$2b$10$LKj0CSLI8B3rmDS0V/0/qOJlqYS7TLA1zV9rOzQ7QzKlGc1XGfQ.O',
+     '$2b$10$GmsSAoiabUIXvmYdPpO9B.jL8xAB7Ocw325XZssN.puaTchcAiv26',
      'IN', 'en');
 
 INSERT INTO users.user_profiles (user_id, japanese_level, residency_status, occupation, region, arrival_date, life_stage) VALUES
@@ -54,7 +54,7 @@ INSERT INTO users.user_preferences (user_id, preferred_language, notification_en
 INSERT INTO users.users (id, email, password_hash, nationality, native_language) VALUES
     ('00000000-0000-0000-0000-000000000003',
      'wang.resident@example.com',
-     '$2b$10$LKj0CSLI8B3rmDS0V/0/qOJlqYS7TLA1zV9rOzQ7QzKlGc1XGfQ.O',
+     '$2b$10$GmsSAoiabUIXvmYdPpO9B.jL8xAB7Ocw325XZssN.puaTchcAiv26',
      'CN', 'zh-CN');
 
 INSERT INTO users.user_profiles (user_id, japanese_level, residency_status, occupation, region, arrival_date, life_stage) VALUES
