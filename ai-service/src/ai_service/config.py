@@ -16,9 +16,14 @@ class Settings(BaseSettings):
     port: int = 8000
     log_level: str = "info"
 
-    # DB / Redis（次の Story から使用）
+    # DB / Redis
     database_url: str = "postgresql://reco:reco_password@localhost:5432/reco"
     redis_url: str = "redis://localhost:6379"
+
+    # LLM (optional)
+    # 未設定の場合はテンプレベースのフォールバック説明が使われる
+    openai_api_key: str | None = None
+    openai_model: str = "gpt-4o-mini"
 
 
 settings = Settings()
