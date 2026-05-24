@@ -47,6 +47,28 @@
 
 🚧 **初期構築フェーズ**。各サービスはディレクトリ作成のみ。詳細は [Jira (RecoForeJP)](https://shinjp.atlassian.net/jira/software/projects/RECO/backlog) を参照。
 
+## エンドツーエンドでデモを動かす
+
+```bash
+# 1. 全サービス起動（初回は数分。frontend と ai-service のビルドが重い）
+docker compose -f infra/docker-compose.yml up -d --build
+
+# 2. 全サービスが healthy になるのを待つ
+docker compose -f infra/docker-compose.yml ps
+
+# 3. アイテムに埋め込みを一括登録（意味検索 / ハイブリッド推薦で必須）
+python scripts/seed_embeddings.py
+# → item-service の /items を取得し、各 item の title+description+カテゴリ+tag を
+#    ai-service の /embeddings/items/{id} に POST、ai.item_embeddings へ upsert
+
+# 4. ブラウザで触る
+#   - http://localhost:3001/                 ランディング
+#   - http://localhost:3001/recommendations  ハイブリッド推薦（content × semantic）
+#   - http://localhost:3001/search           自然言語意味検索
+```
+
+`scripts/seed_embeddings.py` は **冪等**（何度実行しても安全）。アイテムを追加・編集したら再実行するだけで埋め込みが更新される。
+
 ## ローカル開発環境の起動
 
 ### 前提
