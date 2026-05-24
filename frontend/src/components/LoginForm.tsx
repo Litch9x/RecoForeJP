@@ -14,6 +14,7 @@ interface LoginResponse {
   expiresIn: number;
   userId: string;
   email: string;
+  role: "USER" | "ADMIN";
 }
 
 interface Props {
@@ -61,6 +62,7 @@ export function LoginForm({ dict, lang }: Props) {
         expiresAt: computeExpiresAt(data.expiresIn),
         userId: data.userId,
         email: data.email,
+        role: data.role ?? "USER",
       });
       notifyAuthChange();
       router.push(`/${lang}/me`);

@@ -29,7 +29,8 @@
   "auth": {
     "loginLink": "Log in",
     "logout": "Log out",
-    "loggedInAs": "Signed in"
+    "loggedInAs": "Signed in",
+    "adminLink": "Admin"
   },
   "login": {
     "title": "Log in",
@@ -60,5 +61,45 @@
     "nativeLanguage": "Native language",
     "interests": "Interests",
     "noProfile": "Profile not set"
+  },
+  "admin": {
+    "items": {
+      "title": "Item management",
+      "description": "ADMIN only. Adding or deleting items triggers automatic embedding regeneration so changes are reflected in search and recommendations immediately.",
+      "needAdmin": "This page requires the ADMIN role",
+      "loading": "Loading...",
+      "table": {
+        "title": "Title",
+        "category": "Category",
+        "region": "Region",
+        "tags": "Tags",
+        "actions": "Actions"
+      },
+      "delete": "Delete",
+      "deleteConfirm": "Really delete this item?",
+      "addHeading": "Add new item",
+      "form": {
+        "categorySlug": "Category slug",
+        "categoryHint": "e.g. job, housing, admin, medical, japanese-learning, community",
+        "title": "Title",
+        "description": "Description",
+        "url": "URL",
+        "region": "Region",
+        "source": "Source",
+        "minJapaneseLevel": "Min Japanese level",
+        "languages": "Languages",
+        "languagesHint": "Comma-separated (e.g. ja, en, vi)",
+        "tags": "Tags",
+        "tagsHint": "Comma-separated (e.g. foreigner-welcome, remote)",
+        "submit": "Add",
+        "submitting": "Adding..."
+      },
+      "errors": {
+        "emptyTitle": "Title is required",
+        "emptyCategory": "Category slug is required",
+        "addFailed": "Failed to add item",
+        "deleteFailed": "Failed to delete item"
+      }
+    }
   }
 }
