@@ -1,15 +1,15 @@
 // /api/search
-// Browser からの意味検索リクエストを ai-service /search/items に server-side で転送。
-// /api/recommendations と同じパターン（CORS 回避、env で接続先差し替え）。
+// Browser → Next API → api-gateway /search/items → ai-service へ。
+// 当初は ai-service 直結だったが、全トラフィックを gateway 経由に統一するため切替済み。
 
-import { aiServiceUrl } from "@/lib/config";
+import { apiGatewayUrl } from "@/lib/config";
 
 export async function POST(request: Request) {
   const body = await request.text();
 
   let upstream: Response;
   try {
-    upstream = await fetch(`${aiServiceUrl()}/search/items`, {
+    upstream = await fetch(`${apiGatewayUrl()}/search/items`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body,
@@ -18,7 +18,7 @@ export async function POST(request: Request) {
   } catch (err) {
     return Response.json(
       {
-        error: "AI_SERVICE_UNAVAILABLE",
+        error: "API_GATEWAY_UNAVAILABLE",
         message: err instanceof Error ? err.message : String(err),
       },
       { status: 502 },

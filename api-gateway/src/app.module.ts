@@ -1,6 +1,7 @@
 import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { AdminModule } from "./admin/admin.module";
+import { AiProxyModule } from "./ai-proxy/ai-proxy.module";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { AuthModule } from "./auth/auth.module";
@@ -14,6 +15,7 @@ import { MeModule } from "./me/me.module";
     AuthModule,
     MeModule,
     AdminModule,
+    AiProxyModule,
   ],
   controllers: [AppController],
   providers: [AppService],
