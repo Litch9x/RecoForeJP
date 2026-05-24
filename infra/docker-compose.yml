@@ -198,9 +198,36 @@ services:
       - reco-net
 
   # ----------------------------------------------------------------------
-  # 残りのアプリ層は各 Story で Dockerfile 作成後に追加:
-  #   - frontend      (Next.js)       : Frontend Epic で追加
+  # frontend (Next.js) — RECO-29 で追加
   # ----------------------------------------------------------------------
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    container_name: reco-frontend
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 3001
+      HOSTNAME: 0.0.0.0
+    ports:
+      - "${FRONTEND_PORT:-3001}:3001"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "wget",
+          "--quiet",
+          "--tries=1",
+          "--spider",
+          "http://localhost:3001/api/health",
+        ]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+    networks:
+      - reco-net
 
 volumes:
   postgres-data:

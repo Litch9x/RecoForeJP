@@ -231,6 +231,27 @@ curl http://localhost:8082/actuator/health
 docker compose -f infra/docker-compose.yml up -d --build item-service
 ```
 
+## frontend (Next.js 16, App Router)
+
+### ローカル開発
+
+```bash
+cd frontend
+npm install
+npm run dev          # http://localhost:3000 で起動（Next 開発サーバー既定）
+```
+
+### Docker でビルド・起動（ポート 3001）
+
+```bash
+docker compose -f infra/docker-compose.yml up -d --build frontend
+# http://localhost:3001/
+# http://localhost:3001/api/health
+```
+
+`next.config.ts` で `output: "standalone"` を有効にしてあるため、Dockerfile は
+`.next/standalone/server.js` を起動するだけの **薄いイメージ**。
+
 ## ai-service (Python / FastAPI)
 
 ### ローカル開発
