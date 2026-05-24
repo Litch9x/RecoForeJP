@@ -210,6 +210,7 @@ services:
       NODE_ENV: production
       PORT: 3001
       HOSTNAME: 0.0.0.0
+      AI_SERVICE_URL: http://ai-service:8000
     ports:
       - "${FRONTEND_PORT:-3001}:3001"
     healthcheck:

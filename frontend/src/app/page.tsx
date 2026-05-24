@@ -42,17 +42,28 @@ export default function Home() {
           </ul>
         </section>
 
-        <section className="space-y-2">
-          <h2 className="text-xl font-semibold">確認</h2>
-          <p className="text-sm text-zinc-600 dark:text-zinc-400">
-            <a
-              href="/api/health"
-              className="font-medium text-zinc-950 underline-offset-4 hover:underline dark:text-zinc-50"
-            >
-              /api/health
-            </a>{" "}
-            でフロントエンドのヘルスチェック応答が確認できます。
-          </p>
+        <section className="space-y-3">
+          <h2 className="text-xl font-semibold">画面</h2>
+          <ul className="space-y-1 text-sm">
+            <li>
+              <a
+                href="/recommendations"
+                className="font-medium text-zinc-950 underline-offset-4 hover:underline dark:text-zinc-50"
+              >
+                /recommendations
+              </a>{" "}
+              — ハイブリッド推薦（content × semantic）の動作確認
+            </li>
+            <li>
+              <a
+                href="/api/health"
+                className="font-medium text-zinc-950 underline-offset-4 hover:underline dark:text-zinc-50"
+              >
+                /api/health
+              </a>{" "}
+              — ヘルスチェック JSON
+            </li>
+          </ul>
         </section>
       </main>
     </div>
