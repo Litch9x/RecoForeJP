@@ -4,6 +4,7 @@ from fastapi import FastAPI
 
 from ai_service import __version__
 from ai_service.health import router as health_router
+from ai_service.recommend.router import router as recommend_router
 
 
 def create_app() -> FastAPI:
@@ -14,6 +15,7 @@ def create_app() -> FastAPI:
         description="推薦アルゴリズム、テキスト埋め込み、LLM 連携、意味検索を提供する。",
     )
     app.include_router(health_router)
+    app.include_router(recommend_router)
     return app
 
 
