@@ -56,6 +56,15 @@ export default function Home() {
             </li>
             <li>
               <a
+                href="/search"
+                className="font-medium text-zinc-950 underline-offset-4 hover:underline dark:text-zinc-50"
+              >
+                /search
+              </a>{" "}
+              — 自然言語クエリでの意味検索（埋め込み × pgvector）
+            </li>
+            <li>
+              <a
                 href="/api/health"
                 className="font-medium text-zinc-950 underline-offset-4 hover:underline dark:text-zinc-50"
               >
