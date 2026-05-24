@@ -23,12 +23,28 @@ describe("JwtAuthGuard", () => {
     return { ctx, req };
   }
 
-  it("attaches user when token is valid", async () => {
+  it("attaches user with role when token is valid", async () => {
+    jwt.verifyAsync.mockResolvedValue({
+      sub: "u-1",
+      email: "a@example.com",
+      role: "ADMIN",
+    });
+    const { ctx, req } = ctxWithHeader("Bearer good.token");
+
+    await expect(guard.canActivate(ctx)).resolves.toBe(true);
+    expect(req.user).toEqual({
+      userId: "u-1",
+      email: "a@example.com",
+      role: "ADMIN",
+    });
+  });
+
+  it("defaults role to USER when role claim missing (legacy tokens)", async () => {
     jwt.verifyAsync.mockResolvedValue({ sub: "u-1", email: "a@example.com" });
     const { ctx, req } = ctxWithHeader("Bearer good.token");
 
     await expect(guard.canActivate(ctx)).resolves.toBe(true);
-    expect(req.user).toEqual({ userId: "u-1", email: "a@example.com" });
+    expect(req.user?.role).toBe("USER");
   });
 
   it("rejects when Authorization header missing", async () => {

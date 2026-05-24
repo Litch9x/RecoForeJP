@@ -49,13 +49,14 @@ INSERT INTO users.user_preferences (user_id, preferred_language, notification_en
     ('00000000-0000-0000-0000-000000000002', 'en', TRUE);
 
 -- ----------------------------------------------------------------------
--- User 3: 中国出身の長期居住者（来日 5 年、N1、永住）
+-- User 3: 中国出身の長期居住者（来日 5 年、N1、永住）— ADMIN
+-- アイテム管理画面（/admin/items）にアクセスできる
 -- ----------------------------------------------------------------------
-INSERT INTO users.users (id, email, password_hash, nationality, native_language) VALUES
+INSERT INTO users.users (id, email, password_hash, nationality, native_language, role) VALUES
     ('00000000-0000-0000-0000-000000000003',
      'wang.resident@example.com',
      '$2b$10$GmsSAoiabUIXvmYdPpO9B.jL8xAB7Ocw325XZssN.puaTchcAiv26',
-     'CN', 'zh-CN');
+     'CN', 'zh-CN', 'ADMIN');
 
 INSERT INTO users.user_profiles (user_id, japanese_level, residency_status, occupation, region, arrival_date, life_stage) VALUES
     ('00000000-0000-0000-0000-000000000003',

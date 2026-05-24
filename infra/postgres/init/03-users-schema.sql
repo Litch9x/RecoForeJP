@@ -11,8 +11,10 @@ CREATE TABLE users.users (
     password_hash   VARCHAR(255) NOT NULL,
     nationality     VARCHAR(2),                          -- ISO 3166-1 alpha-2
     native_language VARCHAR(8),                          -- BCP47
+    role            VARCHAR(16) NOT NULL DEFAULT 'USER', -- RBAC: USER | ADMIN
     created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    updated_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    CONSTRAINT chk_user_role CHECK (role IN ('USER','ADMIN'))
 );
 COMMENT ON TABLE users.users IS 'アカウント基本情報';
 

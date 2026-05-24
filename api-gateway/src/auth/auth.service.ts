@@ -6,11 +6,13 @@ import {
 } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
+import { Role } from "./auth-user";
 import { LoginResponse } from "./dto/login-response.dto";
 
 interface VerifyCredentialsResponse {
   userId: string;
   email: string;
+  role: Role;
 }
 
 /**
@@ -20,6 +22,7 @@ interface VerifyCredentialsResponse {
  * JWT 仕様:
  *   - subject (sub) = userId
  *   - email クレーム
+ *   - role クレーム（USER | ADMIN）— RolesGuard が参照する
  *   - 署名アルゴリズム HS256（共有 secret）
  */
 @Injectable()
@@ -61,8 +64,9 @@ export class AuthService {
     }
 
     const verified = (await res.json()) as VerifyCredentialsResponse;
+    const role: Role = verified.role ?? "USER";
     const accessToken = await this.jwt.signAsync(
-      { email: verified.email },
+      { email: verified.email, role },
       { subject: verified.userId, expiresIn: expiresInSec },
     );
     return {
@@ -71,6 +75,7 @@ export class AuthService {
       expiresIn: expiresInSec,
       userId: verified.userId,
       email: verified.email,
+      role,
     };
   }
 }
