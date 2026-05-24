@@ -14,9 +14,15 @@ dependencies = [
     "pydantic-settings>=2.6",
     "sqlalchemy>=2.0",
     "psycopg[binary]>=3.2",
+    "numpy>=1.26",
 ]
 
 [project.optional-dependencies]
+# 機械学習モデル（重量級：torch + sentence-transformers で約 2GB）
+# Docker 本番イメージでは必須。ローカルで API/推薦のみ動かす場合は不要。
+ml = [
+    "sentence-transformers>=3.0",
+]
 dev = [
     "pytest>=8.0",
     "pytest-asyncio>=0.24",

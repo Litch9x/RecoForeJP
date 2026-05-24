@@ -3,6 +3,7 @@
 from fastapi import FastAPI
 
 from ai_service import __version__
+from ai_service.embedding.router import router as embedding_router
 from ai_service.health import router as health_router
 from ai_service.recommend.router import router as recommend_router
 
@@ -16,6 +17,7 @@ def create_app() -> FastAPI:
     )
     app.include_router(health_router)
     app.include_router(recommend_router)
+    app.include_router(embedding_router)
     return app
 
 
