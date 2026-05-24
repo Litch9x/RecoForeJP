@@ -29,7 +29,8 @@
   "auth": {
     "loginLink": "ログイン",
     "logout": "ログアウト",
-    "loggedInAs": "ログイン中"
+    "loggedInAs": "ログイン中",
+    "adminLink": "管理"
   },
   "login": {
     "title": "ログイン",
@@ -60,5 +61,45 @@
     "nativeLanguage": "母語",
     "interests": "興味",
     "noProfile": "プロフィール未設定"
+  },
+  "admin": {
+    "items": {
+      "title": "アイテム管理",
+      "description": "ADMIN 専用。追加・削除すると ai-service の埋め込みが自動再生成され、即座に検索 / 推薦に反映されます。",
+      "needAdmin": "このページは ADMIN ロールのみアクセスできます",
+      "loading": "読み込み中...",
+      "table": {
+        "title": "タイトル",
+        "category": "カテゴリ",
+        "region": "地域",
+        "tags": "タグ",
+        "actions": "操作"
+      },
+      "delete": "削除",
+      "deleteConfirm": "本当に削除しますか?",
+      "addHeading": "新規アイテム追加",
+      "form": {
+        "categorySlug": "カテゴリ slug",
+        "categoryHint": "例: job, housing, admin, medical, japanese-learning, community",
+        "title": "タイトル",
+        "description": "説明",
+        "url": "URL",
+        "region": "地域",
+        "source": "情報源",
+        "minJapaneseLevel": "必要日本語レベル",
+        "languages": "対応言語",
+        "languagesHint": "カンマ区切り（例: ja, en, vi）",
+        "tags": "タグ",
+        "tagsHint": "カンマ区切り（例: foreigner-welcome, remote）",
+        "submit": "追加",
+        "submitting": "追加中..."
+      },
+      "errors": {
+        "emptyTitle": "タイトルを入力してください",
+        "emptyCategory": "カテゴリ slug を入力してください",
+        "addFailed": "追加に失敗しました",
+        "deleteFailed": "削除に失敗しました"
+      }
+    }
   }
 }

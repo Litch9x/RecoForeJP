@@ -7,12 +7,15 @@
 
 const STORAGE_KEY = "recoforejp.auth";
 
+export type Role = "USER" | "ADMIN";
+
 export interface StoredAuth {
   accessToken: string;
   tokenType: "Bearer";
   expiresAt: number; // epoch ms
   userId: string;
   email: string;
+  role: Role;
 }
 
 export function readAuth(): StoredAuth | null {
@@ -20,12 +23,14 @@ export function readAuth(): StoredAuth | null {
   const raw = window.localStorage.getItem(STORAGE_KEY);
   if (!raw) return null;
   try {
-    const parsed = JSON.parse(raw) as StoredAuth;
+    const parsed = JSON.parse(raw) as Partial<StoredAuth>;
+    if (!parsed.accessToken || !parsed.expiresAt) return null;
     if (parsed.expiresAt < Date.now()) {
       clearAuth();
       return null;
     }
-    return parsed;
+    // role が無い旧データは USER として扱う（後方互換）
+    return { ...parsed, role: parsed.role ?? "USER" } as StoredAuth;
   } catch {
     return null;
   }

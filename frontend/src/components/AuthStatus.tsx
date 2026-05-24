@@ -34,6 +34,14 @@ export function AuthStatus({ lang, dict }: Props) {
 
   return (
     <div className="flex items-center gap-2 text-xs">
+      {auth.role === "ADMIN" && (
+        <Link
+          href={`/${lang}/admin/items`}
+          className="rounded bg-zinc-900 px-2 py-0.5 text-zinc-50 hover:opacity-80 dark:bg-zinc-50 dark:text-zinc-900"
+        >
+          {dict.adminLink}
+        </Link>
+      )}
       <span className="text-zinc-500">
         {dict.loggedInAs}:{" "}
         <span className="text-zinc-700 dark:text-zinc-300">{auth.email}</span>
