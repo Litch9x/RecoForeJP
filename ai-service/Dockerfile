@@ -26,7 +26,9 @@ USER appuser
 
 EXPOSE 8000
 
+# NOTE: `wget --spider` は HEAD を送るが FastAPI の /health は GET のみで 405 を返すため
+# 使えない。`-O /dev/null` で GET にする。
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-    CMD wget --quiet --tries=1 --spider http://localhost:8000/health || exit 1
+    CMD wget --quiet --tries=1 -O /dev/null http://localhost:8000/health || exit 1
 
 CMD ["uvicorn", "ai_service.main:app", "--host", "0.0.0.0", "--port", "8000"]

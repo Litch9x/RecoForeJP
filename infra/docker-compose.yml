@@ -67,6 +67,8 @@ services:
       JWT_SECRET: ${JWT_SECRET:-dev-only-change-in-prod}
       JWT_EXPIRES_IN_SECONDS: ${JWT_EXPIRES_IN_SECONDS:-3600}
       USER_SERVICE_URL: http://user-service:8081
+      ITEM_SERVICE_URL: http://item-service:8082
+      AI_SERVICE_URL: http://ai-service:8000
     ports:
       - "${API_GATEWAY_PORT:-3000}:3000"
     depends_on:
@@ -75,6 +77,10 @@ services:
       redis:
         condition: service_healthy
       user-service:
+        condition: service_healthy
+      item-service:
+        condition: service_healthy
+      ai-service:
         condition: service_healthy
     healthcheck:
       test:
@@ -186,13 +192,15 @@ services:
       redis:
         condition: service_healthy
     healthcheck:
+      # FastAPI の /health は GET のみで HEAD だと 405 → -O /dev/null で GET を強制
       test:
         [
           "CMD",
           "wget",
           "--quiet",
           "--tries=1",
-          "--spider",
+          "-O",
+          "/dev/null",
           "http://localhost:8000/health",
         ]
       interval: 30s
