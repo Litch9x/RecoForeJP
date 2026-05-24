@@ -25,5 +25,40 @@
       "search": "Natural-language semantic search (embeddings × pgvector)",
       "health": "Health check JSON"
     }
+  },
+  "auth": {
+    "loginLink": "Log in",
+    "logout": "Log out",
+    "loggedInAs": "Signed in"
+  },
+  "login": {
+    "title": "Log in",
+    "description": "Obtains a JWT from the api-gateway /auth/login endpoint and stores it in browser localStorage (MVP).",
+    "emailLabel": "Email",
+    "passwordLabel": "Password",
+    "submit": "Log in",
+    "submitting": "Submitting...",
+    "successMessage": "Logged in. Redirecting to /me.",
+    "errors": {
+      "emptyFields": "Please enter both email and password",
+      "unauthorized": "Invalid email or password",
+      "unavailable": "Could not reach the server",
+      "unknown": "Login failed"
+    }
+  },
+  "me": {
+    "title": "Profile",
+    "description": "Sends the JWT as Authorization header to api-gateway /me/profile.",
+    "loading": "Loading...",
+    "needLogin": "Please log in",
+    "goLogin": "Go to log in",
+    "userId": "User ID",
+    "email": "Email",
+    "jlpt": "JLPT level",
+    "region": "Region",
+    "nationality": "Nationality",
+    "nativeLanguage": "Native language",
+    "interests": "Interests",
+    "noProfile": "Profile not set"
   }
 }

@@ -1,10 +1,13 @@
 /**
- * 環境変数の取得ヘルパ。
+ * 環境変数の取得ヘルパ（server-side / Route Handler 専用）。
  *
- * `AI_SERVICE_URL` は server-side（Route Handler）でのみ参照する。
- * Docker Compose 内では `http://ai-service:8000`、ローカル開発では `http://localhost:8000`。
+ * Docker Compose 内ではコンテナ名、ローカル開発では localhost。
  */
 
 export function aiServiceUrl(): string {
   return process.env.AI_SERVICE_URL ?? "http://localhost:8000";
+}
+
+export function apiGatewayUrl(): string {
+  return process.env.API_GATEWAY_URL ?? "http://localhost:3000";
 }

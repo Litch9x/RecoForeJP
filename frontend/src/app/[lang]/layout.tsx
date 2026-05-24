@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { notFound } from "next/navigation";
 
+import { AuthStatus } from "@/components/AuthStatus";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { hasLocale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/dictionaries";
@@ -37,11 +38,14 @@ export default async function LocalizedRootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <header className="flex items-center justify-between border-b border-zinc-200 bg-white px-6 py-3 text-sm dark:border-zinc-800 dark:bg-zinc-950">
+        <header className="flex items-center justify-between gap-4 border-b border-zinc-200 bg-white px-6 py-3 text-sm dark:border-zinc-800 dark:bg-zinc-950">
           <span className="font-mono text-xs uppercase tracking-widest text-zinc-500">
             {dict.common.appName}
           </span>
-          <LanguageSwitcher current={lang} label={dict.common.languageLabel} />
+          <div className="flex items-center gap-4">
+            <AuthStatus lang={lang} dict={dict.auth} />
+            <LanguageSwitcher current={lang} label={dict.common.languageLabel} />
+          </div>
         </header>
         {children}
       </body>
