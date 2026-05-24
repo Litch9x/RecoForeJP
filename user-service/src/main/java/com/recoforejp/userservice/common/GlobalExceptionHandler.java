@@ -1,5 +1,6 @@
 package com.recoforejp.userservice.common;
 
+import com.recoforejp.userservice.auth.InvalidCredentialsException;
 import com.recoforejp.userservice.user.EmailAlreadyExistsException;
 import com.recoforejp.userservice.user.UserNotFoundException;
 import java.time.OffsetDateTime;
@@ -36,6 +37,18 @@ public class GlobalExceptionHandler {
             .timestamp(OffsetDateTime.now())
             .build();
     return ResponseEntity.status(HttpStatus.CONFLICT).body(body);
+  }
+
+  /** 認証検証失敗 → 401 Unauthorized */
+  @ExceptionHandler(InvalidCredentialsException.class)
+  public ResponseEntity<ErrorResponse> handleInvalidCredentials(InvalidCredentialsException e) {
+    ErrorResponse body =
+        ErrorResponse.builder()
+            .code("INVALID_CREDENTIALS")
+            .message(e.getMessage())
+            .timestamp(OffsetDateTime.now())
+            .build();
+    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(body);
   }
 
   /** {@code @Valid} のバリデーション失敗 → 400 Bad Request */
