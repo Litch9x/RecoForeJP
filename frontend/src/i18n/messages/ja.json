@@ -25,5 +25,40 @@
       "search": "自然言語クエリでの意味検索（埋め込み × pgvector）",
       "health": "ヘルスチェック JSON"
     }
+  },
+  "auth": {
+    "loginLink": "ログイン",
+    "logout": "ログアウト",
+    "loggedInAs": "ログイン中"
+  },
+  "login": {
+    "title": "ログイン",
+    "description": "api-gateway の /auth/login で JWT を取得し、ブラウザの localStorage に保管します（MVP）。",
+    "emailLabel": "メールアドレス",
+    "passwordLabel": "パスワード",
+    "submit": "ログイン",
+    "submitting": "送信中...",
+    "successMessage": "ログイン成功。/me に移動します。",
+    "errors": {
+      "emptyFields": "メールとパスワードを入力してください",
+      "unauthorized": "メールまたはパスワードが正しくありません",
+      "unavailable": "サーバーに接続できませんでした",
+      "unknown": "ログインに失敗しました"
+    }
+  },
+  "me": {
+    "title": "プロフィール",
+    "description": "JWT を Authorization ヘッダに付けて api-gateway /me/profile を取得します。",
+    "loading": "読み込み中...",
+    "needLogin": "ログインしてください",
+    "goLogin": "ログイン画面へ",
+    "userId": "ユーザー ID",
+    "email": "メール",
+    "jlpt": "日本語能力",
+    "region": "地域",
+    "nationality": "国籍",
+    "nativeLanguage": "母語",
+    "interests": "興味",
+    "noProfile": "プロフィール未設定"
   }
 }
