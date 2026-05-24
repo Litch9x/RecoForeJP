@@ -1,0 +1,248 @@
+// =====================================================================
+// RecoForeJP - DB スキーマ (DBML)
+// dbdiagram.io / dbml.dbdiagram.io にこの内容を貼り付けると ER 図化できる
+//
+// 出典: infra/postgres/init/{03,04,05}-*-schema.sql
+// 3 schema 構成 (users / items / ai) ・schema 間は logical FK (CASCADE なし)
+// =====================================================================
+
+Project RecoForeJP {
+  database_type: 'PostgreSQL'
+  Note: '''
+    在日外国人向け AI パーソナライズ推薦システムの DB スキーマ。
+
+    - users schema: user-service (Spring Boot) が所有
+    - items schema: item-service (Spring Boot) が所有
+    - ai    schema: ai-service (FastAPI) が所有
+    - schema 間に物理 FK は張らない（service 切り出しを容易にする論理分離）
+    - pgvector 0.5+ の vector(384) を使用 (multilingual-e5-small)
+  '''
+}
+
+
+// =====================================================================
+// schema: users
+// =====================================================================
+
+Table users.users {
+  id              uuid          [pk, default: `gen_random_uuid()`]
+  email           varchar(255)  [unique, not null]
+  password_hash   varchar(255)  [not null, note: 'bcrypt']
+  nationality     varchar(2)    [note: 'ISO 3166-1 alpha-2 (JP, VN, ...)']
+  native_language varchar(8)    [note: 'BCP47 (ja, en, vi, zh-CN, ...)']
+  role            varchar(16)   [not null, default: 'USER', note: 'RBAC: USER | ADMIN']
+  created_at      timestamptz   [not null, default: `NOW()`]
+  updated_at      timestamptz   [not null, default: `NOW()`]
+
+  Note: 'アカウント基本情報'
+  Indexes {
+    email [unique]
+  }
+}
+
+Table users.user_profiles {
+  user_id          uuid          [pk, ref: - users.users.id, note: '1:1 共有主キー, ON DELETE CASCADE']
+  japanese_level   varchar(4)    [note: 'N1 | N2 | N3 | N4 | N5']
+  residency_status varchar(32)
+  occupation       varchar(64)
+  region           varchar(64)   [note: '都道府県-市区町村']
+  arrival_date     date
+  life_stage       varchar(16)   [note: 'arrival | settled | established']
+  created_at       timestamptz   [not null, default: `NOW()`]
+  updated_at       timestamptz   [not null, default: `NOW()`]
+
+  Note: '日本語レベル・在留資格・地域・生活段階など'
+}
+
+Table users.user_interests {
+  user_id  uuid        [ref: > users.users.id, note: 'ON DELETE CASCADE']
+  interest varchar(64)
+
+  Indexes {
+    (user_id, interest) [pk]
+  }
+  Note: '興味分野（job, housing, japanese-learning ...）'
+}
+
+Table users.user_preferences {
+  user_id              uuid        [pk, ref: - users.users.id]
+  preferred_language   varchar(8)  [not null, default: 'ja']
+  notification_enabled boolean     [not null, default: `TRUE`]
+  updated_at           timestamptz [not null, default: `NOW()`]
+
+  Note: 'UI 言語、通知 ON/OFF など'
+}
+
+
+// =====================================================================
+// schema: items
+// =====================================================================
+
+Table items.categories {
+  id        int        [pk, increment]
+  slug      varchar(64) [unique, not null]
+  name_ja   varchar(128) [not null]
+  name_en   varchar(128)
+  parent_id int        [ref: > items.categories.id, note: '自己参照（階層化用）']
+
+  Note: 'アイテムカテゴリ（job, housing, admin, ...）'
+}
+
+Table items.items {
+  id                 uuid         [pk, default: `gen_random_uuid()`]
+  category_id        int          [not null, ref: > items.categories.id]
+  title              varchar(255) [not null]
+  description        text
+  url                varchar(1024)
+  region             varchar(64)
+  source             varchar(64)
+  min_japanese_level varchar(4)
+  metadata           jsonb        [not null, default: `'{}'::jsonb`]
+  published_at       timestamptz
+  expires_at         timestamptz
+  created_at         timestamptz  [not null, default: `NOW()`]
+  updated_at         timestamptz  [not null, default: `NOW()`]
+
+  Indexes {
+    category_id [name: 'idx_items_category']
+    region      [name: 'idx_items_region']
+    expires_at  [name: 'idx_items_expires_at']
+  }
+  Note: '推薦対象（求人・住居・行政情報など）'
+}
+
+Table items.tags {
+  id   int        [pk, increment]
+  name varchar(64) [unique, not null]
+}
+
+Table items.item_tags {
+  item_id uuid [ref: > items.items.id, note: 'ON DELETE CASCADE']
+  tag_id  int  [ref: > items.tags.id,  note: 'ON DELETE CASCADE']
+
+  Indexes {
+    (item_id, tag_id) [pk]
+  }
+  Note: 'タグ多対多'
+}
+
+Table items.item_languages {
+  item_id  uuid       [ref: > items.items.id, note: 'ON DELETE CASCADE']
+  language varchar(8) [note: 'ja, en, vi, zh-CN, ...']
+
+  Indexes {
+    (item_id, language) [pk]
+  }
+  Note: 'アイテムが対応する言語'
+}
+
+Table items.feedbacks {
+  id            bigint      [pk, increment]
+  user_id       uuid        [not null, note: 'logical FK -> users.users.id']
+  item_id       uuid        [not null, ref: > items.items.id, note: 'ON DELETE CASCADE']
+  feedback_type varchar(16) [not null, note: 'view | click | favorite | rating']
+  rating        smallint    [note: 'rating 時のみ 1-5、それ以外は NULL']
+  created_at    timestamptz [not null, default: `NOW()`]
+
+  Indexes {
+    (user_id, created_at) [name: 'idx_feedbacks_user']
+    (item_id, created_at) [name: 'idx_feedbacks_item']
+  }
+  Note: '閲覧・クリック・お気に入り・評価を集約'
+}
+
+
+// =====================================================================
+// schema: ai
+// =====================================================================
+
+Table ai.user_embeddings {
+  user_id    uuid        [pk, note: 'logical FK -> users.users.id']
+  embedding  "vector(384)" [not null, note: 'multilingual-e5-small の出力次元']
+  updated_at timestamptz [not null, default: `NOW()`]
+
+  Note: 'ユーザー属性・興味をベクトル化したもの (1:1)'
+}
+
+Table ai.item_embeddings {
+  item_id    uuid        [pk, note: 'logical FK -> items.items.id']
+  embedding  "vector(384)" [not null]
+  updated_at timestamptz [not null, default: `NOW()`]
+
+  Indexes {
+    embedding [name: 'idx_item_embeddings_hnsw', type: hnsw, note: 'vector_cosine_ops (pgvector 0.5+)']
+  }
+  Note: 'アイテム本文・タグから生成したベクトル (1:1)'
+}
+
+Table ai.search_queries {
+  id         bigint        [pk, increment]
+  user_id    uuid          [note: 'nullable: 未ログイン検索もある']
+  query      text          [not null]
+  language   varchar(8)
+  embedding  "vector(384)" [note: '後埋め可（nullable）']
+  created_at timestamptz   [not null, default: `NOW()`]
+
+  Indexes {
+    (user_id, created_at) [name: 'idx_search_queries_user']
+  }
+  Note: '自然言語クエリのログ（行動分析用）'
+}
+
+Table ai.recommendation_logs {
+  id         bigint        [pk, increment]
+  user_id    uuid          [not null, note: 'logical FK']
+  item_id    uuid          [not null, note: 'logical FK']
+  score      real          [not null]
+  reason     text
+  algorithm  varchar(32)   [note: 'content | collaborative | hybrid | llm']
+  shown_at   timestamptz   [not null, default: `NOW()`]
+  clicked_at timestamptz
+
+  Indexes {
+    (user_id, shown_at)   [name: 'idx_reco_logs_user']
+    (algorithm, shown_at) [name: 'idx_reco_logs_algorithm']
+  }
+  Note: '推薦の表示とクリックを記録（評価実験用）'
+}
+
+
+// =====================================================================
+// 論理 FK (DBML 上で線を引くため Ref として宣言。物理 FK は張らない)
+// schema 間の Ref は DELETE CASCADE しないことに注意。
+// =====================================================================
+
+Ref logical_feedback_user:        items.feedbacks.user_id        > users.users.id
+Ref logical_user_embedding_user:  ai.user_embeddings.user_id     > users.users.id
+Ref logical_item_embedding_item:  ai.item_embeddings.item_id     > items.items.id
+Ref logical_search_query_user:    ai.search_queries.user_id      > users.users.id
+Ref logical_reco_log_user:        ai.recommendation_logs.user_id > users.users.id
+Ref logical_reco_log_item:        ai.recommendation_logs.item_id > items.items.id
+
+
+// =====================================================================
+// TableGroup: 図を 3 つの schema に視覚的に分けるため
+// =====================================================================
+
+TableGroup users_group {
+  users.users
+  users.user_profiles
+  users.user_interests
+  users.user_preferences
+}
+
+TableGroup items_group {
+  items.categories
+  items.items
+  items.tags
+  items.item_tags
+  items.item_languages
+  items.feedbacks
+}
+
+TableGroup ai_group {
+  ai.user_embeddings
+  ai.item_embeddings
+  ai.search_queries
+  ai.recommendation_logs
+}
