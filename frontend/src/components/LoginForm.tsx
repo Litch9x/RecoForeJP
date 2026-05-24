@@ -6,6 +6,7 @@ import { useState, type FormEvent } from "react";
 import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/dictionaries";
 import { computeExpiresAt, writeAuth } from "@/lib/auth";
+import { notifyAuthChange } from "@/lib/use-auth";
 
 interface LoginResponse {
   accessToken: string;
@@ -61,6 +62,7 @@ export function LoginForm({ dict, lang }: Props) {
         userId: data.userId,
         email: data.email,
       });
+      notifyAuthChange();
       router.push(`/${lang}/me`);
       router.refresh();
     } catch (err) {

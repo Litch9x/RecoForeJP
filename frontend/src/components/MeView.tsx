@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/dictionaries";
 import { clearAuth, readAuth } from "@/lib/auth";
+import { notifyAuthChange } from "@/lib/use-auth";
 
 interface ProfilePayload {
   jlpt?: string | null;
@@ -28,13 +29,15 @@ export function MeView({ dict, lang }: Props) {
   const [state, setState] = useState<State>({ kind: "loading" });
 
   useEffect(() => {
-    const auth = readAuth();
-    if (!auth) {
-      setState({ kind: "unauthenticated" });
-      return;
-    }
     let cancelled = false;
-    (async () => {
+    // 副作用は IIFE 内に集約し、effect 本体での同期 setState を避ける
+    // （react-hooks/set-state-in-effect ルール）
+    void (async () => {
+      const auth = readAuth();
+      if (!auth) {
+        if (!cancelled) setState({ kind: "unauthenticated" });
+        return;
+      }
       try {
         const res = await fetch("/api/auth/me", {
           headers: { Authorization: `${auth.tokenType} ${auth.accessToken}` },
@@ -42,11 +45,11 @@ export function MeView({ dict, lang }: Props) {
         if (cancelled) return;
         if (res.status === 401) {
           clearAuth();
+          notifyAuthChange();
           setState({ kind: "unauthenticated" });
           return;
         }
         if (res.status === 404) {
-          // user-service: プロフィール未設定でも 200 で空が返るので 404 はまれ
           setState({
             kind: "ready",
             email: auth.email,

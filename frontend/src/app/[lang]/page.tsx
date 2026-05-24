@@ -71,6 +71,8 @@ export default async function Home({ params }: PageProps<"/[lang]">) {
               — {dict.home.screens.search}
             </li>
             <li>
+              {/* JSON エンドポイントなので next/link ではなく素の <a> を使う */}
+              {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
               <a
                 href="/api/health"
                 className="font-medium text-zinc-950 underline-offset-4 hover:underline dark:text-zinc-50"
