@@ -40,8 +40,8 @@ describe("AuthService", () => {
     } as unknown as Response);
   }
 
-  it("returns signed JWT on successful verification", async () => {
-    mockFetchOk({ userId: "u-123", email: "a@example.com" });
+  it("returns signed JWT with role claim on successful verification", async () => {
+    mockFetchOk({ userId: "u-123", email: "a@example.com", role: "ADMIN" });
 
     const res = await service.login("a@example.com", "password123");
 
@@ -54,7 +54,7 @@ describe("AuthService", () => {
       }),
     );
     expect(jwt.signAsync).toHaveBeenCalledWith(
-      { email: "a@example.com" },
+      { email: "a@example.com", role: "ADMIN" },
       { subject: "u-123", expiresIn: 3600 },
     );
     expect(res).toEqual({
@@ -63,7 +63,20 @@ describe("AuthService", () => {
       expiresIn: 3600,
       userId: "u-123",
       email: "a@example.com",
+      role: "ADMIN",
     });
+  });
+
+  it("defaults to USER role when verify response omits role", async () => {
+    mockFetchOk({ userId: "u-1", email: "a@example.com" });
+
+    const res = await service.login("a@example.com", "password123");
+
+    expect(jwt.signAsync).toHaveBeenCalledWith(
+      { email: "a@example.com", role: "USER" },
+      expect.any(Object),
+    );
+    expect(res.role).toBe("USER");
   });
 
   it("maps 401 from user-service to UnauthorizedException", async () => {
@@ -93,7 +106,7 @@ describe("AuthService", () => {
 
   it("falls back to default user-service URL when env unset", async () => {
     config.get = jest.fn(() => undefined);
-    mockFetchOk({ userId: "u-1", email: "a@example.com" });
+    mockFetchOk({ userId: "u-1", email: "a@example.com", role: "USER" });
 
     await service.login("a@example.com", "password123");
 

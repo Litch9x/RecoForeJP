@@ -99,6 +99,8 @@ class AuthControllerIT {
     JsonNode body = objectMapper.readTree(res.body());
     assertThat(body.get("userId").asText()).isEqualTo(userId);
     assertThat(body.get("email").asText()).isEqualTo("auth-ok@example.com");
+    // 新規登録ユーザーは USER ロール（DEFAULT）
+    assertThat(body.get("role").asText()).isEqualTo("USER");
     // passwordHash を含めない
     assertThat(body.has("passwordHash")).isFalse();
   }

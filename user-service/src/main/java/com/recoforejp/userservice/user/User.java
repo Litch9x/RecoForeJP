@@ -2,6 +2,8 @@ package com.recoforejp.userservice.user;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
@@ -46,6 +48,15 @@ public class User {
   /** BCP47 言語コード (例: {@code ja}, {@code vi}, {@code zh-CN}) */
   @Column(name = "native_language", length = 8)
   private String nativeLanguage;
+
+  /**
+   * 権限ロール。新規登録時は DB の DEFAULT 'USER' に任せる（{@code @Builder.Default} で
+   * Java 側でも USER を初期値とする）。
+   */
+  @Enumerated(EnumType.STRING)
+  @Column(nullable = false, length = 16)
+  @lombok.Builder.Default
+  private UserRole role = UserRole.USER;
 
   @CreationTimestamp
   @Column(name = "created_at", nullable = false, updatable = false)
