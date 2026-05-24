@@ -1,0 +1,29 @@
+{
+  "common": {
+    "appName": "RecoForeJP",
+    "languageLabel": "言語"
+  },
+  "nav": {
+    "home": "ホーム",
+    "recommendations": "推薦",
+    "search": "検索"
+  },
+  "home": {
+    "tagline": "在日外国人向け AI パーソナライズ推薦システム",
+    "description": "日本語能力・在留資格・興味・行動履歴に基づき、就職・住居・行政手続き・日本語学習・地域イベントなどの生活情報を推薦するマイクロサービスアプリケーションの管理用 UI。",
+    "servicesHeading": "サービス構成",
+    "services": {
+      "frontend": "Next.js (この UI、ポート 3001)",
+      "apiGateway": "NestJS (3000) - 認証・ルーティング",
+      "userService": "Spring Boot (8081) - ユーザー・プロフィール・設定",
+      "itemService": "Spring Boot (8082) - アイテム・カテゴリ・フィードバック",
+      "aiService": "FastAPI (8000) - 推薦・埋め込み・LLM・意味検索"
+    },
+    "screensHeading": "画面",
+    "screens": {
+      "recommendations": "ハイブリッド推薦（content × semantic）の動作確認",
+      "search": "自然言語クエリでの意味検索（埋め込み × pgvector）",
+      "health": "ヘルスチェック JSON"
+    }
+  }
+}

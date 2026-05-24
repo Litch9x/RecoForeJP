@@ -1,0 +1,29 @@
+{
+  "common": {
+    "appName": "RecoForeJP",
+    "languageLabel": "Language"
+  },
+  "nav": {
+    "home": "Home",
+    "recommendations": "Recommendations",
+    "search": "Search"
+  },
+  "home": {
+    "tagline": "AI-Powered Personalized Recommendation System for Foreigners in Japan",
+    "description": "Admin UI for a microservices application that recommends jobs, housing, administrative procedures, Japanese learning, and local events based on Japanese proficiency, residency status, interests, and behavior history.",
+    "servicesHeading": "Services",
+    "services": {
+      "frontend": "Next.js (this UI, port 3001)",
+      "apiGateway": "NestJS (3000) - auth & routing",
+      "userService": "Spring Boot (8081) - users, profiles, preferences",
+      "itemService": "Spring Boot (8082) - items, categories, feedback",
+      "aiService": "FastAPI (8000) - recommendations, embeddings, LLM, semantic search"
+    },
+    "screensHeading": "Screens",
+    "screens": {
+      "recommendations": "Hybrid recommendation (content × semantic) playground",
+      "search": "Natural-language semantic search (embeddings × pgvector)",
+      "health": "Health check JSON"
+    }
+  }
+}
