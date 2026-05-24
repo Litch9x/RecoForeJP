@@ -2,20 +2,18 @@
 
 import { useState, type FormEvent } from "react";
 
+import type { Dictionary } from "@/i18n/dictionaries";
 import type {
   SemanticSearchRequest,
   SemanticSearchResponse,
 } from "@/lib/search-types";
 import { SearchResultList } from "./SearchResultList";
 
-const EXAMPLES = [
-  "ベトナム語で働けるカスタマーサポート",
-  "英語 OK の IT エンジニア",
-  "外国人向けの病院 東京",
-  "やさしい日本語のクラス",
-];
+interface Props {
+  dict: Dictionary["search"];
+}
 
-export function SearchForm() {
+export function SearchForm({ dict }: Props) {
   const [query, setQuery] = useState("");
   const [limit, setLimit] = useState(10);
 
@@ -26,7 +24,7 @@ export function SearchForm() {
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!query.trim()) {
-      setError("クエリを入力してください");
+      setError(dict.form.emptyQueryError);
       return;
     }
     setLoading(true);
@@ -43,7 +41,7 @@ export function SearchForm() {
       });
       if (!response.ok) {
         const text = await response.text();
-        setError(`エラー (${response.status}): ${text}`);
+        setError(`${dict.form.errorPrefix} (${response.status}): ${text}`);
         return;
       }
       const data = (await response.json()) as SemanticSearchResponse;
@@ -62,20 +60,20 @@ export function SearchForm() {
         className="space-y-4 rounded-lg border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-950"
       >
         <label className="block">
-          <span className="text-sm font-medium">検索クエリ（自然言語）</span>
+          <span className="text-sm font-medium">{dict.form.queryLabel}</span>
           <input
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="例: ベトナム語で働ける仕事"
+            placeholder={dict.form.queryPlaceholder}
             autoFocus
             className="mt-1 block w-full rounded border border-zinc-300 bg-white px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-900"
           />
         </label>
 
         <div className="flex flex-wrap gap-2">
-          <span className="text-xs text-zinc-500">サンプル:</span>
-          {EXAMPLES.map((ex) => (
+          <span className="text-xs text-zinc-500">{dict.form.samplesLabel}</span>
+          {dict.samples.map((ex) => (
             <button
               type="button"
               key={ex}
@@ -88,7 +86,9 @@ export function SearchForm() {
         </div>
 
         <label className="block">
-          <span className="text-sm font-medium">取得件数: {limit}</span>
+          <span className="text-sm font-medium">
+            {dict.form.limitLabel}: {limit}
+          </span>
           <input
             type="range"
             min={1}
@@ -105,7 +105,7 @@ export function SearchForm() {
           disabled={loading}
           className="w-full rounded bg-black px-4 py-2 text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-50 dark:bg-white dark:text-black sm:w-auto"
         >
-          {loading ? "検索中..." : "意味検索を実行"}
+          {loading ? dict.form.submitting : dict.form.submit}
         </button>
 
         {error && (
@@ -116,7 +116,11 @@ export function SearchForm() {
       </form>
 
       {results && (
-        <SearchResultList query={results.query} results={results.results} />
+        <SearchResultList
+          dict={dict.results}
+          query={results.query}
+          results={results.results}
+        />
       )}
     </div>
   );

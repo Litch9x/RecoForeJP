@@ -1,21 +1,25 @@
+import type { Dictionary } from "@/i18n/dictionaries";
 import type { HybridRecommendedItem } from "@/lib/recommend-types";
 
-export function RecommendationList({
-  items,
-}: {
+interface Props {
+  dict: Dictionary["recommend"]["results"];
   items: HybridRecommendedItem[];
-}) {
+}
+
+export function RecommendationList({ dict, items }: Props) {
   if (items.length === 0) {
     return (
       <p className="rounded border border-zinc-200 bg-zinc-50 p-4 text-sm text-zinc-600 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-400">
-        条件にマッチする推薦がありませんでした。条件を緩めるか、自然言語クエリを変えて試してください。
+        {dict.emptyMessage}
       </p>
     );
   }
 
   return (
     <section className="space-y-3">
-      <h2 className="text-lg font-semibold">推薦結果 ({items.length} 件)</h2>
+      <h2 className="text-lg font-semibold">
+        {dict.heading} ({items.length} {dict.countSuffix})
+      </h2>
       <ul className="space-y-3">
         {items.map((item, idx) => (
           <li
@@ -29,7 +33,7 @@ export function RecommendationList({
                     #{idx + 1}
                   </span>
                   <h3 className="text-base font-semibold">
-                    {item.title ?? "(タイトル未取得)"}
+                    {item.title ?? dict.missingTitle}
                   </h3>
                 </div>
 
