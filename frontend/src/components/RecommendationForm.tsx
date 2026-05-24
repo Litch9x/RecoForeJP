@@ -2,6 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 
+import type { Dictionary } from "@/i18n/dictionaries";
 import type {
   HybridRecommendRequest,
   HybridRecommendResponse,
@@ -9,15 +10,31 @@ import type {
 } from "@/lib/recommend-types";
 import { RecommendationList } from "./RecommendationList";
 
-// 既知のシードカテゴリ slug（infra/postgres/init/10-seed-categories.sql 参照）
-const INTEREST_CHOICES = [
-  { slug: "job", label: "就職" },
-  { slug: "housing", label: "住居" },
-  { slug: "admin", label: "行政手続き" },
-  { slug: "medical", label: "医療" },
-  { slug: "japanese-learning", label: "日本語学習" },
-  { slug: "community-event", label: "地域イベント" },
-];
+interface Props {
+  dict: Dictionary["recommend"];
+}
+
+// 既知のシードカテゴリ slug（infra/postgres/init/10-seed-categories.sql 参照）。
+// 表示ラベルは dict から引く（後方互換: japaneseLearning ↔ japanese-learning など）。
+const INTEREST_SLUGS = [
+  "job",
+  "housing",
+  "admin",
+  "medical",
+  "japanese-learning",
+  "community-event",
+] as const;
+
+type InterestSlug = (typeof INTEREST_SLUGS)[number];
+
+const INTEREST_DICT_KEY: Record<InterestSlug, keyof Dictionary["recommend"]["form"]["interests"]> = {
+  job: "job",
+  housing: "housing",
+  admin: "admin",
+  medical: "medical",
+  "japanese-learning": "japaneseLearning",
+  "community-event": "communityEvent",
+};
 
 const LANGUAGES = [
   { code: "ja", label: "日本語" },
@@ -26,7 +43,7 @@ const LANGUAGES = [
   { code: "zh-CN", label: "中文" },
 ];
 
-export function RecommendationForm() {
+export function RecommendationForm({ dict }: Props) {
   const [japaneseLevel, setJapaneseLevel] = useState<JapaneseLevel | "">("N3");
   const [region, setRegion] = useState("");
   const [preferredLanguage, setPreferredLanguage] = useState("ja");
@@ -76,7 +93,7 @@ export function RecommendationForm() {
 
       if (!response.ok) {
         const text = await response.text();
-        setError(`エラー (${response.status}): ${text}`);
+        setError(`${dict.form.errorPrefix} (${response.status}): ${text}`);
         return;
       }
 
@@ -97,7 +114,7 @@ export function RecommendationForm() {
       >
         <div className="grid gap-4 sm:grid-cols-2">
           <label className="block">
-            <span className="text-sm font-medium">日本語レベル</span>
+            <span className="text-sm font-medium">{dict.form.jlptLabel}</span>
             <select
               value={japaneseLevel}
               onChange={(e) =>
@@ -105,17 +122,19 @@ export function RecommendationForm() {
               }
               className="mt-1 block w-full rounded border border-zinc-300 bg-white px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-900"
             >
-              <option value="">未指定</option>
-              <option value="N5">N5 (初級)</option>
+              <option value="">{dict.form.jlptUnspecified}</option>
+              <option value="N5">N5 ({dict.form.jlptN5Hint})</option>
               <option value="N4">N4</option>
               <option value="N3">N3</option>
               <option value="N2">N2</option>
-              <option value="N1">N1 (上級)</option>
+              <option value="N1">N1 ({dict.form.jlptN1Hint})</option>
             </select>
           </label>
 
           <label className="block">
-            <span className="text-sm font-medium">希望表示言語</span>
+            <span className="text-sm font-medium">
+              {dict.form.preferredLanguageLabel}
+            </span>
             <select
               value={preferredLanguage}
               onChange={(e) => setPreferredLanguage(e.target.value)}
@@ -130,12 +149,12 @@ export function RecommendationForm() {
           </label>
 
           <label className="block sm:col-span-2">
-            <span className="text-sm font-medium">居住地域（任意）</span>
+            <span className="text-sm font-medium">{dict.form.regionLabel}</span>
             <input
               type="text"
               value={region}
               onChange={(e) => setRegion(e.target.value)}
-              placeholder="例: 東京都-港区"
+              placeholder={dict.form.regionPlaceholder}
               className="mt-1 block w-full rounded border border-zinc-300 bg-white px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-900"
             />
           </label>
@@ -143,23 +162,24 @@ export function RecommendationForm() {
 
         <fieldset>
           <legend className="text-sm font-medium">
-            興味カテゴリ（複数選択可）
+            {dict.form.interestsLegend}
           </legend>
           <div className="mt-2 flex flex-wrap gap-2">
-            {INTEREST_CHOICES.map((c) => {
-              const selected = interests.includes(c.slug);
+            {INTEREST_SLUGS.map((slug) => {
+              const selected = interests.includes(slug);
+              const label = dict.form.interests[INTEREST_DICT_KEY[slug]];
               return (
                 <button
                   type="button"
-                  key={c.slug}
-                  onClick={() => toggleInterest(c.slug)}
+                  key={slug}
+                  onClick={() => toggleInterest(slug)}
                   className={`rounded-full border px-3 py-1 text-sm transition-colors ${
                     selected
                       ? "border-zinc-900 bg-zinc-900 text-white dark:border-zinc-100 dark:bg-zinc-100 dark:text-black"
                       : "border-zinc-300 bg-white text-zinc-700 hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800"
                   }`}
                 >
-                  {c.label}
+                  {label}
                 </button>
               );
             })}
@@ -167,25 +187,23 @@ export function RecommendationForm() {
         </fieldset>
 
         <label className="block">
-          <span className="text-sm font-medium">
-            自然言語クエリ（任意・意味検索を有効化）
-          </span>
+          <span className="text-sm font-medium">{dict.form.queryLabel}</span>
           <input
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="例: 英語で働けるカスタマーサポート"
+            placeholder={dict.form.queryPlaceholder}
             className="mt-1 block w-full rounded border border-zinc-300 bg-white px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-900"
           />
           <span className="mt-1 block text-xs text-zinc-500">
-            指定すると content + semantic のハイブリッド推薦になります。
+            {dict.form.queryHint}
           </span>
         </label>
 
         <div className="grid gap-4 sm:grid-cols-2">
           <label className="block">
             <span className="text-sm font-medium">
-              content の重み: {weightContent.toFixed(2)}
+              {dict.form.contentWeightLabel}: {weightContent.toFixed(2)}
             </span>
             <input
               type="range"
@@ -200,7 +218,7 @@ export function RecommendationForm() {
 
           <label className="block">
             <span className="text-sm font-medium">
-              semantic の重み: {weightSemantic.toFixed(2)}
+              {dict.form.semanticWeightLabel}: {weightSemantic.toFixed(2)}
             </span>
             <input
               type="range"
@@ -219,7 +237,7 @@ export function RecommendationForm() {
           disabled={loading}
           className="w-full rounded bg-black px-4 py-2 text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-50 dark:bg-white dark:text-black sm:w-auto"
         >
-          {loading ? "推薦取得中..." : "推薦を取得"}
+          {loading ? dict.form.submitting : dict.form.submit}
         </button>
 
         {error && (
@@ -229,7 +247,7 @@ export function RecommendationForm() {
         )}
       </form>
 
-      {results && <RecommendationList items={results.items} />}
+      {results && <RecommendationList dict={dict.results} items={results.items} />}
     </div>
   );
 }

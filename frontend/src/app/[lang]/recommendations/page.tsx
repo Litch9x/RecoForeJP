@@ -1,27 +1,32 @@
+import { notFound } from "next/navigation";
+
 import { RecommendationForm } from "@/components/RecommendationForm";
+import { hasLocale } from "@/i18n/config";
+import { getDictionary } from "@/i18n/dictionaries";
 
-export const metadata = {
-  title: "推薦 | RecoForeJP",
-};
+export default async function RecommendationsPage({
+  params,
+}: PageProps<"/[lang]">) {
+  const { lang } = await params;
+  if (!hasLocale(lang)) notFound();
+  const dict = getDictionary(lang);
 
-export default function RecommendationsPage() {
   return (
     <div className="flex flex-1 flex-col bg-zinc-50 dark:bg-black">
       <main className="mx-auto w-full max-w-3xl space-y-6 px-6 py-12 sm:px-10">
         <header className="space-y-2">
           <p className="text-xs uppercase tracking-widest text-zinc-500">
-            RecoForeJP
+            {dict.common.appName}
           </p>
           <h1 className="text-2xl font-semibold tracking-tight">
-            ハイブリッド推薦（content × semantic）
+            {dict.recommend.title}
           </h1>
           <p className="text-sm text-zinc-600 dark:text-zinc-400">
-            ユーザー属性に基づくコンテンツベース推薦と、自然言語クエリによる意味検索を
-            重み付きで統合した結果を返します（論文 3.3.3）。
+            {dict.recommend.description}
           </p>
         </header>
 
-        <RecommendationForm />
+        <RecommendationForm dict={dict.recommend} />
       </main>
     </div>
   );

@@ -101,5 +101,70 @@
         "deleteFailed": "Failed to delete item"
       }
     }
+  },
+  "search": {
+    "title": "Semantic Search (multilingual-e5 × pgvector)",
+    "description": "Converts a natural-language query into a 384-dim vector and performs approximate nearest-neighbor search (HNSW) over pre-registered item embeddings using cosine similarity (paper 2.3.3 / 3.4.4).",
+    "form": {
+      "queryLabel": "Search query (natural language)",
+      "queryPlaceholder": "e.g. jobs where I can work in Vietnamese",
+      "samplesLabel": "Examples:",
+      "limitLabel": "Limit",
+      "submit": "Run semantic search",
+      "submitting": "Searching...",
+      "emptyQueryError": "Please enter a query",
+      "errorPrefix": "Error"
+    },
+    "samples": [
+      "customer support that uses Vietnamese",
+      "IT engineer position with English OK",
+      "hospital for foreigners in Tokyo",
+      "easy Japanese class for beginners"
+    ],
+    "results": {
+      "heading": "Search results",
+      "countSuffix": "items",
+      "querySuffix": "query",
+      "emptyTitle": "No results for",
+      "emptyHint": "Hint: semantic search requires item embeddings to be registered beforehand. If nothing is registered yet, you'll get 0 results.",
+      "missingTitle": "(title unavailable)",
+      "similarityLabel": "similarity"
+    }
+  },
+  "recommend": {
+    "title": "Hybrid Recommendation (content × semantic)",
+    "description": "Returns a weighted combination of content-based recommendations (driven by user attributes) and semantic search (driven by a natural-language query). See paper section 3.3.3.",
+    "form": {
+      "jlptLabel": "Japanese level",
+      "jlptUnspecified": "Unspecified",
+      "jlptN5Hint": "beginner",
+      "jlptN1Hint": "advanced",
+      "preferredLanguageLabel": "Preferred display language",
+      "regionLabel": "Region (optional)",
+      "regionPlaceholder": "e.g. Tokyo-Minato",
+      "interestsLegend": "Interests (multiple allowed)",
+      "interests": {
+        "job": "Job",
+        "housing": "Housing",
+        "admin": "Administrative",
+        "medical": "Medical",
+        "japaneseLearning": "Japanese learning",
+        "communityEvent": "Community event"
+      },
+      "queryLabel": "Natural-language query (optional — enables semantic search)",
+      "queryPlaceholder": "e.g. customer support job that uses English",
+      "queryHint": "When provided, the result becomes a hybrid of content + semantic scoring.",
+      "contentWeightLabel": "content weight",
+      "semanticWeightLabel": "semantic weight",
+      "submit": "Get recommendations",
+      "submitting": "Loading...",
+      "errorPrefix": "Error"
+    },
+    "results": {
+      "heading": "Recommendations",
+      "countSuffix": "items",
+      "emptyMessage": "No items matched. Try relaxing the conditions or changing the natural-language query.",
+      "missingTitle": "(title unavailable)"
+    }
   }
 }

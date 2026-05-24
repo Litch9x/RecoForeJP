@@ -101,5 +101,70 @@
         "deleteFailed": "削除に失敗しました"
       }
     }
+  },
+  "search": {
+    "title": "意味検索（multilingual-e5 × pgvector）",
+    "description": "自然言語クエリを 384 次元ベクトルに変換し、事前に登録されたアイテム埋め込みに対して cosine 類似度で近似最近傍検索（HNSW）を行います（論文 2.3.3 / 3.4.4）。",
+    "form": {
+      "queryLabel": "検索クエリ（自然言語）",
+      "queryPlaceholder": "例: ベトナム語で働ける仕事",
+      "samplesLabel": "サンプル:",
+      "limitLabel": "取得件数",
+      "submit": "意味検索を実行",
+      "submitting": "検索中...",
+      "emptyQueryError": "クエリを入力してください",
+      "errorPrefix": "エラー"
+    },
+    "samples": [
+      "ベトナム語で働けるカスタマーサポート",
+      "英語 OK の IT エンジニア",
+      "外国人向けの病院 東京",
+      "やさしい日本語のクラス"
+    ],
+    "results": {
+      "heading": "検索結果",
+      "countSuffix": "件",
+      "querySuffix": "クエリ",
+      "emptyTitle": "に対する検索結果がありませんでした。",
+      "emptyHint": "ヒント: 意味検索は事前にアイテム埋め込みを登録しておく必要があります。まだ何も登録されていない場合は 0 件が返ります。",
+      "missingTitle": "(タイトル未取得)",
+      "similarityLabel": "similarity"
+    }
+  },
+  "recommend": {
+    "title": "ハイブリッド推薦（content × semantic）",
+    "description": "ユーザー属性に基づくコンテンツベース推薦と、自然言語クエリによる意味検索を重み付きで統合した結果を返します（論文 3.3.3）。",
+    "form": {
+      "jlptLabel": "日本語レベル",
+      "jlptUnspecified": "未指定",
+      "jlptN5Hint": "初級",
+      "jlptN1Hint": "上級",
+      "preferredLanguageLabel": "希望表示言語",
+      "regionLabel": "居住地域（任意）",
+      "regionPlaceholder": "例: 東京都-港区",
+      "interestsLegend": "興味カテゴリ（複数選択可）",
+      "interests": {
+        "job": "就職",
+        "housing": "住居",
+        "admin": "行政手続き",
+        "medical": "医療",
+        "japaneseLearning": "日本語学習",
+        "communityEvent": "地域イベント"
+      },
+      "queryLabel": "自然言語クエリ（任意・意味検索を有効化）",
+      "queryPlaceholder": "例: 英語で働けるカスタマーサポート",
+      "queryHint": "指定すると content + semantic のハイブリッド推薦になります。",
+      "contentWeightLabel": "content の重み",
+      "semanticWeightLabel": "semantic の重み",
+      "submit": "推薦を取得",
+      "submitting": "推薦取得中...",
+      "errorPrefix": "エラー"
+    },
+    "results": {
+      "heading": "推薦結果",
+      "countSuffix": "件",
+      "emptyMessage": "条件にマッチする推薦がありませんでした。条件を緩めるか、自然言語クエリを変えて試してください。",
+      "missingTitle": "(タイトル未取得)"
+    }
   }
 }
